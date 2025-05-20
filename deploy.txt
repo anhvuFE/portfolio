@@ -1,0 +1,19 @@
+git init  
+ git add .
+git status
+git commit -m "Completed commit"
+git branch -M 'main'
+git remote add origin https://github.com/anhvuFE/portfolio.git
+git push -u origin main
+
+package.json(
+
+"homepage": "https://anhvuFE.github.io/portfolio",
+
+
+  "scripts": {
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
+
+)
+the last: npm run deploy

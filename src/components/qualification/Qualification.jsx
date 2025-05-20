@@ -136,7 +136,7 @@ const Qualification = () => {
                   Frontend Developer (ReactJs)
                 </h3>
                 <span className="qualification__subtitle">
-                  IMAP Vietnam Education Group
+                  Technixo Software Company Limited
                 </span>
                 <div className="qualification__calendar">
                   <i className="uil uil-calendar-alt"></i> Dec 2023 - Apr 2024
