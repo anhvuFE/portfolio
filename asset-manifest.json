@@ -1,8 +1,9 @@
 {
   "files": {
-    "main.css": "/portfolio/static/css/main.c91fd62a.css",
-    "main.js": "/portfolio/static/js/main.05d3c860.js",
+    "main.css": "/portfolio/static/css/main.737aac96.css",
+    "main.js": "/portfolio/static/js/main.38138041.js",
     "static/media/CV-VuXuanAnh.pdf": "/portfolio/static/media/CV-VuXuanAnh.517a07a6087dde5aeab5.pdf",
+    "static/media/new-avt.png": "/portfolio/static/media/new-avt.54b5fa067bb3cf6cbcda.png",
     "static/media/Design.jpg": "/portfolio/static/media/Design.032bbe7c0beb1e60a77d.jpg",
     "static/media/WED.jpg": "/portfolio/static/media/WED.da341e1017c09e1d8a35.jpg",
     "static/media/NWC.jpg": "/portfolio/static/media/NWC.6fae261edf0daa1c22a4.jpg",
@@ -11,14 +12,12 @@
     "static/media/SSL.jpg": "/portfolio/static/media/SSL.4b83de4316dd9a672294.jpg",
     "static/media/ENW.jpg": "/portfolio/static/media/ENW.64ee7b4c94e3dea623ba.jpg",
     "static/media/Project.jpg": "/portfolio/static/media/Project.77cedd902df1d742170e.jpg",
-    "static/media/avt.jpg": "/portfolio/static/media/avt.90a4c31080833ef94c07.jpg",
-    "static/media/ẢNH CV.jpg": "/portfolio/static/media/ẢNH CV.823126d6731fce9007b9.jpg",
     "index.html": "/portfolio/index.html",
-    "main.c91fd62a.css.map": "/portfolio/static/css/main.c91fd62a.css.map",
-    "main.05d3c860.js.map": "/portfolio/static/js/main.05d3c860.js.map"
+    "main.737aac96.css.map": "/portfolio/static/css/main.737aac96.css.map",
+    "main.38138041.js.map": "/portfolio/static/js/main.38138041.js.map"
   },
   "entrypoints": [
-    "static/css/main.c91fd62a.css",
-    "static/js/main.05d3c860.js"
+    "static/css/main.737aac96.css",
+    "static/js/main.38138041.js"
   ]
 }
