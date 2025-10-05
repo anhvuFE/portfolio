@@ -7,24 +7,27 @@ const Social = () => {
         href="https://www.facebook.com/xuananhvu2312/"
         className="home__social-icon"
         target="_blank"
+        rel="noopener noreferrer"
       >
-        <i class="uil uil-facebook"></i>
+        <i className="uil uil-facebook"></i>
       </a>
 
       <a
         href="https://github.com/anhvuFE"
         className="home__social-icon"
         target="_blank"
+        rel="noopener noreferrer"
       >
-        <i class="uil uil-github-alt"></i>
+        <i className="uil uil-github-alt"></i>
       </a>
 
       <a
         href="https://web.telegram.org/"
         className="home__social-icon"
         target="_blank"
+        rel="noopener noreferrer"
       >
-        <i class="uil uil-telegram"></i>
+        <i className="uil uil-telegram"></i>
       </a>
     </div>
   );

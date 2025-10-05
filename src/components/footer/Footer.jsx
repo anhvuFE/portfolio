@@ -1,9 +1,11 @@
 import React from "react";
 import "./footer.css";
+import Sakura from "../sakura/Sakura";
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className="footer sakura-container">
+      <Sakura />
       <div className="footer__container container">
         <div className="footer__header">
           <h1 className="footer__title">Xuan Anh</h1>

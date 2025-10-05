@@ -50,7 +50,7 @@ const Qualification = () => {
             }
           >
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Computer Science</h3>
                 <span className="qualification__subtitle">FPT University</span>
                 <div className="qualification__calendar">
@@ -58,20 +58,13 @@ const Qualification = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
               </div>
             </div>
 
             <div className="qualification__data">
-              <div></div>
-
-              <div>
-                <span className="qualification__rounder"></span>
-              </div>
-
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">High School Education</h3>
                 <span className="qualification__subtitle">
                   Ha Bac High School
@@ -79,6 +72,10 @@ const Qualification = () => {
                 <div className="qualification__calendar">
                   <i className="uil uil-calendar-alt"></i> 2017 - 2020
                 </div>
+              </div>
+
+              <div className="qualification__timeline">
+                <span className="qualification__rounder"></span>
               </div>
             </div>
           </div>
@@ -92,7 +89,7 @@ const Qualification = () => {
             }
           >
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">
                   LCMS (Laundry Chain Management System)
                 </h3>
@@ -100,26 +97,17 @@ const Qualification = () => {
                   FPT University - Project Manager, Full-stack Developer
                 </span>
                 <div className="qualification__calendar">
-                  <i className="uil uil-calendar-alt"></i> 2025 - Graduation
-                  Project
+                  <i className="uil uil-calendar-alt"></i> 2025 - Graduation Project
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
               </div>
             </div>
 
             <div className="qualification__data">
-              <div></div>
-
-              <div>
-                <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
-              </div>
-
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Mark Management System</h3>
                 <span className="qualification__subtitle">
                   FPT University - Backend & Frontend Developer
@@ -128,10 +116,14 @@ const Qualification = () => {
                   <i className="uil uil-calendar-alt"></i> 2024
                 </div>
               </div>
+
+              <div className="qualification__timeline">
+                <span className="qualification__rounder"></span>
+              </div>
             </div>
 
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">
                   Frontend Developer (ReactJs)
                 </h3>
@@ -143,21 +135,13 @@ const Qualification = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
               </div>
             </div>
 
             <div className="qualification__data">
-              <div></div>
-
-              <div>
-                <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
-              </div>
-
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Sell Phone Card</h3>
                 <span className="qualification__subtitle">
                   FPT University - Java Developer
@@ -166,34 +150,30 @@ const Qualification = () => {
                   <i className="uil uil-calendar-alt"></i> 2023 - Mini Project
                 </div>
               </div>
+
+              <div className="qualification__timeline">
+                <span className="qualification__rounder"></span>
+              </div>
             </div>
 
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Frontend Developer</h3>
                 <span className="qualification__subtitle">
                   TrueConnect Joint Stock Company
                 </span>
                 <div className="qualification__calendar">
-                  <i className="uil uil-calendar-alt"></i>July 2022 - Nov 2022
+                  <i className="uil uil-calendar-alt"></i> July 2022 - Nov 2022
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
               </div>
             </div>
 
             <div className="qualification__data">
-              <div></div>
-
-              <div>
-                <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
-              </div>
-
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Frontend Developer</h3>
                 <span className="qualification__subtitle">
                   Eztek Digital Solutions Company
@@ -202,10 +182,14 @@ const Qualification = () => {
                   <i className="uil uil-calendar-alt"></i> Mar 2022 - July 2022
                 </div>
               </div>
+
+              <div className="qualification__timeline">
+                <span className="qualification__rounder"></span>
+              </div>
             </div>
 
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">Thriffly – Mobileapp</h3>
                 <span className="qualification__subtitle">
                   FPT University - Android Developer
@@ -215,21 +199,13 @@ const Qualification = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
               </div>
             </div>
 
             <div className="qualification__data">
-              <div></div>
-
-              <div>
-                <span className="qualification__rounder"></span>
-                <span className="qualification__line"></span>
-              </div>
-
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">E-commerce Website</h3>
                 <span className="qualification__subtitle">
                   FPT University - Full-stack Developer
@@ -238,10 +214,14 @@ const Qualification = () => {
                   <i className="uil uil-calendar-alt"></i> Project
                 </div>
               </div>
+
+              <div className="qualification__timeline">
+                <span className="qualification__rounder"></span>
+              </div>
             </div>
 
             <div className="qualification__data">
-              <div>
+              <div className="qualification__content-card">
                 <h3 className="qualification__title">
                   Alex – Princess Rescue Game
                 </h3>
@@ -253,7 +233,7 @@ const Qualification = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="qualification__timeline">
                 <span className="qualification__rounder"></span>
               </div>
             </div>

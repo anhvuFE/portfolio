@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./certificate.css";
 
 // Import certificate images
@@ -93,23 +93,8 @@ const Certificate = () => {
   const totalSlides = certificates.length;
   const maxIndex = totalSlides - slidesToShow;
 
-  // Auto slide function with smooth transition
-  useEffect(() => {
-    let interval;
-
-    if (autoSlide && !modalOpen) {
-      interval = setInterval(() => {
-        if (!isAnimating) {
-          handleNext();
-        }
-      }, 3000); // slide every 3 seconds
-    }
-
-    return () => clearInterval(interval);
-  }, [currentIndex, maxIndex, isAnimating, autoSlide, modalOpen]);
-
   // Handle smooth transition to next slide
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setIsAnimating(true);
 
     if (currentIndex >= maxIndex) {
@@ -128,7 +113,22 @@ const Certificate = () => {
         setIsAnimating(false);
       }, 500);
     }
-  };
+  }, [currentIndex, maxIndex]);
+
+  // Auto slide function with smooth transition
+  useEffect(() => {
+    let interval;
+
+    if (autoSlide && !modalOpen) {
+      interval = setInterval(() => {
+        if (!isAnimating) {
+          handleNext();
+        }
+      }, 3000); // slide every 3 seconds
+    }
+
+    return () => clearInterval(interval);
+  }, [currentIndex, maxIndex, isAnimating, autoSlide, modalOpen, handleNext]);
 
   // Handle smooth transition to previous slide
   const handlePrev = () => {
