@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/portfolio/static/css/main.af4381c8.css",
+    "main.js": "/portfolio/static/js/main.d29b1241.js",
+    "static/media/CV-VuXuanAnh.pdf": "/portfolio/static/media/CV-VuXuanAnh.517a07a6087dde5aeab5.pdf",
+    "static/media/new-avt.png": "/portfolio/static/media/new-avt.54b5fa067bb3cf6cbcda.png",
+    "static/media/Design.jpg": "/portfolio/static/media/Design.032bbe7c0beb1e60a77d.jpg",
+    "static/media/WED.jpg": "/portfolio/static/media/WED.da341e1017c09e1d8a35.jpg",
+    "static/media/NWC.jpg": "/portfolio/static/media/NWC.6fae261edf0daa1c22a4.jpg",
+    "static/media/PMG.jpg": "/portfolio/static/media/PMG.996cd40e8ced1302f7fa.jpg",
+    "static/media/SWE.jpg": "/portfolio/static/media/SWE.29b991a013c9ffbd28d4.jpg",
+    "static/media/SSL.jpg": "/portfolio/static/media/SSL.4b83de4316dd9a672294.jpg",
+    "static/media/ENW.jpg": "/portfolio/static/media/ENW.64ee7b4c94e3dea623ba.jpg",
+    "static/media/Project.jpg": "/portfolio/static/media/Project.77cedd902df1d742170e.jpg",
+    "index.html": "/portfolio/index.html",
+    "main.af4381c8.css.map": "/portfolio/static/css/main.af4381c8.css.map",
+    "main.d29b1241.js.map": "/portfolio/static/js/main.d29b1241.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.af4381c8.css",
+    "static/js/main.d29b1241.js"
+  ]
+}
