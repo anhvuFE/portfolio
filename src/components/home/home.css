@@ -1,4 +1,10 @@
 /* Modern Home Section */
+
+/* Blinking cursor animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
 .home {
   position: relative;
   min-height: 100vh;
@@ -15,11 +21,20 @@
 
 .home__content {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-8);
   align-items: center;
   min-height: calc(100vh - var(--header-height));
   padding: var(--space-8) 0;
+}
+
+/* Image Wrapper */
+.home__img-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  justify-content: center;
 }
 
 /* Social Links */
@@ -28,6 +43,15 @@
   flex-direction: column;
   gap: var(--space-4);
   align-items: center;
+}
+
+.home__social-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-4);
 }
 
 .home__social-icon {

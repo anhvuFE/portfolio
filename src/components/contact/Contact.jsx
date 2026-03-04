@@ -1,173 +1,412 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import emailjs from "@emailjs/browser";
+import { Form, Input, Button, Card, Row, Col, Typography, message, Space, Divider, notification } from "antd";
+import {
+  MailOutlined,
+  PhoneOutlined,
+  SendOutlined,
+  UserOutlined,
+  ProjectOutlined,
+  LinkedinOutlined,
+  GithubOutlined,
+  FacebookOutlined,
+  CheckCircleOutlined,
+  EnvironmentOutlined
+} from "@ant-design/icons";
+import { Container, Box } from "@mui/material";
 import "./contact.css";
 
-const Contact = () => {
-  const form = useRef();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const { Title, Text, Paragraph } = Typography;
+const { TextArea } = Input;
 
-  const sendEmail = (e) => {
-    e.preventDefault();
+const Contact = () => {
+  const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const contactInfo = [
+    {
+      icon: <MailOutlined style={{ fontSize: 24 }} />,
+      title: "Email",
+      content: "vuxuananh22@gmail.com",
+      link: "mailto:vuxuananh22@gmail.com",
+      action: "Send Email",
+      color: "#667eea"
+    },
+    {
+      icon: <PhoneOutlined style={{ fontSize: 24 }} />,
+      title: "Phone",
+      content: "+84 982 168 318",
+      link: "tel:+84982168318",
+      action: "Call Now",
+      color: "#764ba2"
+    },
+    {
+      icon: <LinkedinOutlined style={{ fontSize: 24 }} />,
+      title: "LinkedIn",
+      content: "Vũ Xuân Anh",
+      link: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/",
+      action: "Connect",
+      color: "#0077B5"
+    },
+    {
+      icon: <GithubOutlined style={{ fontSize: 24 }} />,
+      title: "GitHub",
+      content: "anhvuFE",
+      link: "https://github.com/anhvuFE",
+      action: "View Profile",
+      color: "#333"
+    }
+  ];
+
+  const sendEmail = (values) => {
     setIsSubmitting(true);
 
+    const templateParams = {
+      name: values.name,
+      email: values.email,
+      project: values.message,
+      to_name: "Xuan Anh"
+    };
+
     emailjs
-      .sendForm("service_u54tvkn", "template_kt9sbbg", form.current, {
-        publicKey: "y0KlrUodeWH1-Fg9W",
-      })
+      .send("service_u54tvkn", "template_kt9sbbg", templateParams, "y0KlrUodeWH1-Fg9W")
       .then(() => {
-        setIsSubmitted(true);
+        notification.success({
+          message: "Message Sent Successfully!",
+          description: "Thank you for reaching out. I'll get back to you soon.",
+          icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
+          placement: "topRight"
+        });
+        form.resetFields();
         setIsSubmitting(false);
-        setTimeout(() => setIsSubmitted(false), 3000);
       })
       .catch((error) => {
         console.error(error);
+        message.error("Failed to send message. Please try again.");
         setIsSubmitting(false);
       });
-    e.target.reset();
   };
 
   return (
-    <section className="contact section" id="contact">
-      <h2 className="section__title animate-title">Get in touch</h2>
-      <span className="section__subtitle animate-subtitle">Contact Me</span>
-
-      <div className="contact__container container grid">
-        <div className="contact__content">
-          <h3 className="contact__title">Talk to me</h3>
-
-          <div className="contact__info">
-            <div className="contact__card card-animation">
-              <div className="contact__card-icon-wrapper">
-                <i className="bx bx-mail-send contact__card-icon"></i>
-              </div>
-
-              <h3 className="contact__card-title">Email</h3>
-              <span className="contact__card-data">vuxuananh22@gmail.com</span>
-
-              <a
-                href="https://mail.google.com/mail/u/0/#inbox?compose=new"
-                className="contact__button"
-                aria-label="Email me"
-              >
-                Write me{" "}
-                <i className="bx bx-right-arrow-alt contact__button-icon"></i>
-              </a>
-            </div>
-
-            <div className="contact__card card-animation">
-              <div className="contact__card-icon-wrapper">
-                <i className="bx bx-mobile contact__card-icon"></i>
-              </div>
-
-              <h3 className="contact__card-title">Telephone</h3>
-              <span className="contact__card-data">0982168318</span>
-
-              <a
-                href="tel:+84982168318"
-                className="contact__button"
-                aria-label="Call me"
-              >
-                Call me now{" "}
-                <i className="bx bx-right-arrow-alt contact__button-icon"></i>
-              </a>
-            </div>
-
-            <div className="contact__card card-animation">
-              <div className="contact__card-icon-wrapper">
-                <i className="bx bxl-messenger contact__card-icon"></i>
-              </div>
-
-              <h3 className="contact__card-title">Messenger</h3>
-              <span className="contact__card-data">xuananhvu2312</span>
-
-              <a
-                href="https://www.facebook.com/xuananhvu2312/"
-                className="contact__button"
-                aria-label="Message me on Facebook"
-              >
-                Write me{" "}
-                <i className="bx bx-right-arrow-alt contact__button-icon"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="contact__content form-animation">
-          <h3 className="contact__title">Write me your project</h3>
-          <form ref={form} onSubmit={sendEmail} className="contact__form">
-            <div className="contact__form-div">
-              <label className="contact__form-tag">Name</label>
-              <input
-                type="text"
-                name="name"
-                className="contact__form-input"
-                placeholder="Insert your name"
-                required
-              />
-            </div>
-
-            <div className="contact__form-div">
-              <label className="contact__form-tag">Mail</label>
-              <input
-                type="email"
-                name="email"
-                className="contact__form-input"
-                placeholder="Insert your email"
-                required
-              />
-            </div>
-
-            <div className="contact__form-div contact__form-area">
-              <label className="contact__form-tag">Project</label>
-              <textarea
-                name="project"
-                cols="30"
-                rows="10"
-                className="contact__form-input"
-                placeholder="Write your project"
-                required
-              ></textarea>
-            </div>
-
-            <button
-              className={`button button--flex ${
-                isSubmitting ? "button--loading" : ""
-              } ${isSubmitted ? "button--success" : ""}`}
-              disabled={isSubmitting}
+    <Box
+      component="section"
+      id="contact"
+      sx={{
+        py: { xs: 8, md: 12 },
+        background: "linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%)",
+        minHeight: "100vh"
+      }}
+    >
+      <Container maxWidth="lg">
+          <Box sx={{ textAlign: "center", mb: 6 }}>
+            <Title
+              level={1}
+              style={{
+                fontSize: "3rem",
+                fontWeight: 700,
+                marginBottom: 16,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text"
+              }}
             >
-              {isSubmitted ? (
-                <>
-                  Message Sent
-                  <i className="bx bx-check-circle ml-2"></i>
-                </>
-              ) : (
-                <>
-                  Send Message
-                  <svg
-                    className="button-icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
+              Let's Connect
+            </Title>
+            <Paragraph
+              style={{
+                fontSize: "1.125rem",
+                color: "rgba(0, 0, 0, 0.65)",
+                maxWidth: 600,
+                margin: "0 auto"
+              }}
+            >
+              Have a project in mind or just want to say hello? I'd love to hear from you!
+            </Paragraph>
+          </Box>
+
+        <Row gutter={[32, 32]}>
+          <Col xs={24} lg={10}>
+              <div>
+                <Title level={3} style={{ marginBottom: 24, color: "#333" }}>
+                  Get In Touch
+                </Title>
+
+                <Space size="large" style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                  {contactInfo.map((info, index) => (
+                      <Card
+                        key={index}
+                        hoverable
+                        style={{
+                          borderRadius: 12,
+                          border: "1px solid rgba(102, 126, 234, 0.15)",
+                          background: "rgba(255, 255, 255, 0.9)",
+                          backdropFilter: "blur(10px)",
+                          transition: "all 0.3s ease"
+                        }}
+                        styles={{ body: { padding: 20 } }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = "translateY(-4px)";
+                          e.currentTarget.style.boxShadow = "0 12px 24px rgba(102, 126, 234, 0.15)";
+                          e.currentTarget.style.borderColor = "rgba(102, 126, 234, 0.3)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "translateY(0)";
+                          e.currentTarget.style.boxShadow = "";
+                          e.currentTarget.style.borderColor = "rgba(102, 126, 234, 0.15)";
+                        }}
+                      >
+                        <Space align="start" size="middle">
+                          <Box
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: "50%",
+                              background: `linear-gradient(135deg, ${info.color}20 0%, ${info.color}10 100%)`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: info.color
+                            }}
+                          >
+                            {info.icon}
+                          </Box>
+                          <div style={{ flex: 1 }}>
+                            <Text strong style={{ fontSize: "1rem", display: "block", marginBottom: 4 }}>
+                              {info.title}
+                            </Text>
+                            <Text style={{ color: "rgba(0, 0, 0, 0.65)", display: "block", marginBottom: 8 }}>
+                              {info.content}
+                            </Text>
+                            <Button
+                              type="link"
+                              href={info.link}
+                              target={info.link.startsWith("http") ? "_blank" : undefined}
+                              style={{ padding: 0, color: info.color, fontWeight: 500 }}
+                              icon={<SendOutlined />}
+                            >
+                              {info.action}
+                            </Button>
+                          </div>
+                        </Space>
+                      </Card>
+                  ))}
+                </Space>
+
+                <Divider style={{ margin: "32px 0" }} />
+
+                <Card
+                  style={{
+                    borderRadius: 12,
+                    background: "linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)",
+                    border: "1px solid rgba(102, 126, 234, 0.1)"
+                  }}
+                  styles={{ body: { padding: 24 } }}
+                >
+                  <Space size="small" style={{ display: "flex", flexDirection: "column" }}>
+                    <EnvironmentOutlined style={{ fontSize: 20, color: "#667eea" }} />
+                    <Title level={5} style={{ margin: "8px 0" }}>Location</Title>
+                    <Text style={{ color: "rgba(0, 0, 0, 0.65)" }}>
+                      Hanoi, Vietnam
+                    </Text>
+                    <Text type="secondary" style={{ fontSize: "0.875rem" }}>
+                      Available for remote work worldwide
+                    </Text>
+                  </Space>
+                </Card>
+              </div>
+          </Col>
+
+          <Col xs={24} lg={14}>
+              <Card
+                style={{
+                  borderRadius: 16,
+                  boxShadow: "0 10px 40px rgba(102, 126, 234, 0.1)",
+                  border: "1px solid rgba(102, 126, 234, 0.15)",
+                  background: "rgba(255, 255, 255, 0.95)",
+                  backdropFilter: "blur(20px)"
+                }}
+                styles={{ body: { padding: 32 } }}
+              >
+                <Title level={3} style={{ marginBottom: 24, color: "#333" }}>
+                  Send Me a Message
+                </Title>
+
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={sendEmail}
+                  requiredMark={false}
+                >
+                  <Row gutter={16}>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        name="name"
+                        label={<Text strong>Your Name</Text>}
+                        rules={[{ required: true, message: "Please enter your name" }]}
+                      >
+                        <Input
+                          prefix={<UserOutlined />}
+                          placeholder="John Doe"
+                          size="large"
+                          style={{
+                            borderRadius: 8,
+                            borderColor: "rgba(102, 126, 234, 0.3)"
+                          }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        name="email"
+                        label={<Text strong>Your Email</Text>}
+                        rules={[
+                          { required: true, message: "Please enter your email" },
+                          { type: "email", message: "Please enter a valid email" }
+                        ]}
+                      >
+                        <Input
+                          prefix={<MailOutlined />}
+                          placeholder="john@example.com"
+                          size="large"
+                          style={{
+                            borderRadius: 8,
+                            borderColor: "rgba(102, 126, 234, 0.3)"
+                          }}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+
+                  <Form.Item
+                    name="subject"
+                    label={<Text strong>Subject</Text>}
+                    rules={[{ required: true, message: "Please enter a subject" }]}
                   >
-                    <path
-                      d="M14.2199 21.9352C13.0399 21.9352 11.3699 21.1052 10.0499 17.1352L9.32988 14.9752L7.16988 14.2552C3.20988 12.9352 2.37988 11.2652 2.37988 10.0852C2.37988 8.91525 3.20988 7.23525 7.16988 5.90525L15.6599 3.07525C17.7799 2.36525 19.5499 2.57525 20.6399 3.65525C21.7299 4.73525 21.9399 6.51525 21.2299 8.63525L18.3999 17.1252C17.0699 21.1052 15.3999 21.9352 14.2199 21.9352ZM7.63988 7.33525C4.85988 8.26525 3.86988 9.36525 3.86988 10.0852C3.86988 10.8052 4.85988 11.9052 7.63988 12.8252L10.1599 13.6652C10.3799 13.7352 10.5599 13.9152 10.6299 14.1352L11.4699 16.6552C12.3899 19.4352 13.4999 20.4252 14.2199 20.4252C14.9399 20.4252 16.0399 19.4352 16.9699 16.6552L19.7999 8.16525C20.3099 6.62525 20.2199 5.36525 19.5699 4.71525C18.9199 4.06525 17.6599 3.98525 16.1299 4.49525L7.63988 7.33525Z"
-                      fill="currentColor"
-                    ></path>
-                    <path
-                      d="M10.11 14.7052C9.92005 14.7052 9.73005 14.6352 9.58005 14.4852C9.29005 14.1952 9.29005 13.7152 9.58005 13.4252L13.16 9.83518C13.45 9.54518 13.93 9.54518 14.22 9.83518C14.51 10.1252 14.51 10.6052 14.22 10.8952L10.64 14.4852C10.5 14.6352 10.3 14.7052 10.11 14.7052Z"
-                      fill="currentColor"
-                    ></path>
-                  </svg>
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      </div>
-    </section>
+                    <Input
+                      prefix={<ProjectOutlined />}
+                      placeholder="Project inquiry, collaboration, or just saying hi!"
+                      size="large"
+                      style={{
+                        borderRadius: 8,
+                        borderColor: "rgba(102, 126, 234, 0.3)"
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="message"
+                    label={<Text strong>Your Message</Text>}
+                    rules={[{ required: true, message: "Please enter your message" }]}
+                  >
+                    <TextArea
+                      placeholder="Tell me about your project or idea..."
+                      rows={6}
+                      style={{
+                        borderRadius: 8,
+                        borderColor: "rgba(102, 126, 234, 0.3)",
+                        resize: "none"
+                      }}
+                      maxLength={500}
+                      showCount
+                    />
+                  </Form.Item>
+
+                  <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      size="large"
+                      loading={isSubmitting}
+                      icon={<SendOutlined />}
+                      style={{
+                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        border: "none",
+                        borderRadius: 8,
+                        height: 48,
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        width: "100%",
+                        boxShadow: "0 4px 15px rgba(102, 126, 234, 0.3)",
+                        transition: "all 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow = "0 8px 25px rgba(102, 126, 234, 0.4)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 4px 15px rgba(102, 126, 234, 0.3)";
+                      }}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                    </Button>
+                  </Form.Item>
+                </Form>
+
+                <Divider style={{ margin: "24px 0" }} />
+
+                <Box sx={{ textAlign: "center" }}>
+                  <Text type="secondary">
+                    Or connect with me on social media
+                  </Text>
+                  <Space size="large" style={{ marginTop: 16 }}>
+                    <Button
+                      type="text"
+                      icon={<LinkedinOutlined style={{ fontSize: 20 }} />}
+                      href="https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/"
+                      target="_blank"
+                      style={{
+                        color: "#0077B5",
+                        transition: "transform 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.2)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    />
+                    <Button
+                      type="text"
+                      icon={<GithubOutlined style={{ fontSize: 20 }} />}
+                      href="https://github.com/anhvuFE"
+                      target="_blank"
+                      style={{
+                        color: "#333",
+                        transition: "transform 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.2)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    />
+                    <Button
+                      type="text"
+                      icon={<FacebookOutlined style={{ fontSize: 20 }} />}
+                      href="https://www.facebook.com/xuananhvu2312/"
+                      target="_blank"
+                      style={{
+                        color: "#1877F2",
+                        transition: "transform 0.3s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.2)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    />
+                  </Space>
+                </Box>
+              </Card>
+          </Col>
+        </Row>
+
+      </Container>
+    </Box>
   );
 };
 
