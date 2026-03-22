@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -42,97 +42,111 @@ const fadeIn = keyframes`
   }
 `;
 
-const Qualification = () => {
-  const [value, setValue] = useState(0);
+interface EducationItem {
+  title: string;
+  subtitle: string;
+  date: string;
+  type: string;
+  description: string;
+}
 
-  const handleChange = (event, newValue) => {
+interface ExperienceItem {
+  title: string;
+  subtitle: string;
+  date: string;
+  type: string;
+  skills?: string[];
+}
+
+interface TabPanelProps {
+  children: React.ReactNode;
+  value: number;
+  index: number;
+}
+
+const education: EducationItem[] = [
+  {
+    title: "Bachelor's degree, Information Technology",
+    subtitle: "FPT University",
+    date: "Oct 2020 - Apr 2025",
+    type: "degree",
+    description: "React.js, C# and 5+ other skills"
+  },
+  {
+    title: "High School Diploma",
+    subtitle: "Ha Bac High School",
+    date: "2017 - 2020",
+    type: "school",
+    description: "High School Diploma with honors"
+  }
+];
+
+const experience: ExperienceItem[] = [
+  {
+    title: "Software Engineer",
+    subtitle: "neliSoftwares",
+    date: "Jul 2025 - Present",
+    type: "work",
+    skills: ["React.js", "HTML5", "Node.js", "TypeScript"]
+  },
+  {
+    title: "Frontend Developer",
+    subtitle: "Technixo",
+    date: "Dec 2023 - Apr 2024 · 5 months",
+    type: "work",
+    skills: ["React.js", "TypeScript"]
+  },
+  {
+    title: "Frontend Developer",
+    subtitle: "True Connect",
+    date: "Jul 2022 - Feb 2023 · 8 months",
+    type: "work",
+    skills: ["TypeScript", "JavaScript"]
+  },
+  {
+    title: "Frontend Developer",
+    subtitle: "EZTek Solutions",
+    date: "Jan 2022 - Jul 2022 · 7 months",
+    type: "work",
+    skills: ["React.js", "JavaScript", "HTML", "CSS"]
+  }
+];
+
+const getTypeIcon = (type: string): React.ReactElement => {
+  switch (type) {
+    case "work":
+      return <BusinessIcon />;
+    case "project":
+      return <ProjectIcon />;
+    case "degree":
+      return <SchoolIcon />;
+    default:
+      return <CodeIcon />;
+  }
+};
+
+const getTypeColor = (type: string): string => {
+  switch (type) {
+    case "work":
+      return "#0eaddf";
+    case "project":
+      return "#0c8db3";
+    case "degree":
+    case "school":
+      return "#00bcd4";
+    default:
+      return "#0eaddf";
+  }
+};
+
+const Qualification: React.FC = () => {
+  const [value, setValue] = useState<number>(0);
+
+  const handleChange = useCallback((_event: React.SyntheticEvent, newValue: number): void => {
     setValue(newValue);
-  };
+  }, []);
 
-  const education = [
-    {
-      title: "Computer Science",
-      subtitle: "FPT University",
-      date: "2020 - 2025",
-      type: "degree",
-      description: "Bachelor's Degree in Software Engineering"
-    },
-    {
-      title: "High School Education",
-      subtitle: "Ha Bac High School",
-      date: "2017 - 2020",
-      type: "school",
-      description: "High School Diploma with honors"
-    }
-  ];
-
-  const experience = [
-    {
-      title: "LCMS (Laundry Chain Management System)",
-      subtitle: "FPT University - Project Manager, Full-stack Developer",
-      date: "2025 - Graduation Project",
-      type: "project",
-      skills: ["React", "Node.js", "MongoDB", "Project Management"]
-    },
-    {
-      title: "Mark Management System",
-      subtitle: "FPT University - Backend & Frontend Developer",
-      date: "2024",
-      type: "project",
-      skills: ["React", "Express", "PostgreSQL"]
-    },
-    {
-      title: "Frontend Developer (ReactJs)",
-      subtitle: "Technixo Software Company Limited",
-      date: "Dec 2023 - Apr 2024",
-      type: "work",
-      skills: ["React", "TypeScript", "Material-UI"]
-    },
-    {
-      title: "Sell Phone Card",
-      subtitle: "FPT University - Java Developer",
-      date: "2023 - Mini Project",
-      type: "project",
-      skills: ["Java", "Spring Boot", "MySQL"]
-    },
-    {
-      title: "Frontend Developer",
-      subtitle: "TrueConnect Joint Stock Company",
-      date: "July 2022 - Nov 2022",
-      type: "work",
-      skills: ["React", "JavaScript", "CSS"]
-    },
-    {
-      title: "Frontend Developer",
-      subtitle: "Eztek Digital Solutions Company",
-      date: "Mar 2022 - July 2022",
-      type: "work",
-      skills: ["HTML", "CSS", "JavaScript", "React"]
-    },
-    {
-      title: "Thriffly – Mobile App",
-      subtitle: "FPT University - Android Developer",
-      date: "Project",
-      type: "project",
-      skills: ["Android", "Java", "Firebase"]
-    },
-    {
-      title: "E-commerce Website",
-      subtitle: "FPT University - Full-stack Developer",
-      date: "Project",
-      type: "project",
-      skills: ["MERN Stack", "Payment Integration"]
-    },
-    {
-      title: "Alex – Princess Rescue Game",
-      subtitle: "FPT University - Game Developer (Unity)",
-      date: "Project",
-      type: "project",
-      skills: ["Unity", "C#", "Game Design"]
-    }
-  ];
-
-  const TabPanel = ({ children, value, index }) => {
+  const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
     return (
       <Box
         role="tabpanel"
@@ -146,40 +160,13 @@ const Qualification = () => {
     );
   };
 
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case "work":
-        return <BusinessIcon />;
-      case "project":
-        return <ProjectIcon />;
-      case "degree":
-        return <SchoolIcon />;
-      default:
-        return <CodeIcon />;
-    }
-  };
-
-  const getTypeColor = (type) => {
-    switch (type) {
-      case "work":
-        return "#667eea";
-      case "project":
-        return "#764ba2";
-      case "degree":
-      case "school":
-        return "#00bcd4";
-      default:
-        return "#667eea";
-    }
-  };
-
   return (
     <Box
       component="section"
       id="portfolio"
       sx={{
         py: { xs: 8, md: 12 },
-        background: "linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%)",
+        background: "#0a0a0a",
         minHeight: "100vh"
       }}
     >
@@ -191,10 +178,7 @@ const Qualification = () => {
               fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
               fontWeight: 700,
               mb: 2,
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
+              color: "#0eaddf"
             }}
           >
             Qualification
@@ -202,7 +186,7 @@ const Qualification = () => {
           <Typography
             variant="h6"
             sx={{
-              color: "text.secondary",
+              color: "#8b949e",
               fontWeight: 400
             }}
           >
@@ -213,9 +197,9 @@ const Qualification = () => {
         <Paper
           elevation={0}
           sx={{
-            background: "rgba(255, 255, 255, 0.8)",
+            background: "rgba(22, 22, 22, 0.8)",
             backdropFilter: "blur(20px)",
-            border: "1px solid rgba(0, 0, 0, 0.08)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: 3,
             overflow: "hidden"
           }}
@@ -225,10 +209,10 @@ const Qualification = () => {
             onChange={handleChange}
             centered
             sx={{
-              borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
               "& .MuiTabs-indicator": {
                 height: 3,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                background: "#0eaddf"
               }
             }}
           >
@@ -240,7 +224,7 @@ const Qualification = () => {
                 textTransform: "none",
                 fontWeight: value === 0 ? 600 : 500,
                 fontSize: "1rem",
-                color: value === 0 ? "#667eea" : "text.secondary",
+                color: value === 0 ? "#0eaddf" : "#8b949e",
                 minHeight: 64,
                 px: 4
               }}
@@ -253,7 +237,7 @@ const Qualification = () => {
                 textTransform: "none",
                 fontWeight: value === 1 ? 600 : 500,
                 fontSize: "1rem",
-                color: value === 1 ? "#667eea" : "text.secondary",
+                color: value === 1 ? "#0eaddf" : "#8b949e",
                 minHeight: 64,
                 px: 4
               }}
@@ -263,29 +247,21 @@ const Qualification = () => {
           <Box sx={{ p: { xs: 2, md: 4 } }}>
             <TabPanel value={value} index={0}>
               <Timeline position="alternate">
-                {education.map((item, index) => (
+                {education.map((item: EducationItem, index: number) => (
                   <TimelineItem key={index}>
                     <TimelineOppositeContent
                       sx={{
-                        display: { xs: "none", sm: "block" },
-                        color: "#1a1a1a",
-                        fontSize: "1rem",
-                        fontWeight: 600
+                        display: { xs: "none", sm: "flex" },
+                        alignItems: "center",
+                        justifyContent: "flex-end"
                       }}
                     >
-                      <Typography variant="body1" sx={{ fontWeight: 600, color: "#1a1a1a", mb: 1 }}>
-                        {item.title}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: "#666666" }}>
-                        {item.subtitle}
-                      </Typography>
                       <Chip
                         icon={<CalendarIcon sx={{ fontSize: 16 }} />}
                         label={item.date}
                         sx={{
-                          mt: 1,
-                          background: "rgba(102, 126, 234, 0.1)",
-                          color: "#667eea",
+                          background: "rgba(14, 173, 223, 0.1)",
+                          color: "#0eaddf",
                           fontWeight: 600
                         }}
                       />
@@ -305,21 +281,21 @@ const Qualification = () => {
                         {getTypeIcon(item.type)}
                       </TimelineDot>
                       {index < education.length - 1 && (
-                        <TimelineConnector sx={{ background: "linear-gradient(180deg, #667eea 0%, #764ba2 100%)" }} />
+                        <TimelineConnector sx={{ background: "#0eaddf" }} />
                       )}
                     </TimelineSeparator>
                     <TimelineContent>
                       <Card
                         sx={{
-                          background: "white",
-                          border: "2px solid rgba(102, 126, 234, 0.2)",
+                          background: "#161616",
+                          border: "2px solid rgba(14, 173, 223, 0.2)",
                           borderRadius: 2,
                           transition: "all 0.3s ease",
                           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
                           "&:hover": {
                             transform: "translateY(-5px)",
-                            boxShadow: "0 10px 20px rgba(102, 126, 234, 0.3)",
-                            borderColor: "#667eea"
+                            boxShadow: "0 10px 20px rgba(14, 173, 223, 0.3)",
+                            borderColor: "#0eaddf"
                           }
                         }}
                       >
@@ -329,7 +305,7 @@ const Qualification = () => {
                             sx={{
                               fontWeight: 700,
                               mb: 1,
-                              color: "#1a1a1a",
+                              color: "#e6edf3",
                               fontSize: "1.2rem"
                             }}
                           >
@@ -338,7 +314,7 @@ const Qualification = () => {
                           <Typography
                             variant="body1"
                             sx={{
-                              color: "#667eea",
+                              color: "#0eaddf",
                               mb: 1,
                               fontWeight: 600,
                               fontSize: "1rem"
@@ -349,7 +325,7 @@ const Qualification = () => {
                           <Typography
                             variant="body2"
                             sx={{
-                              color: "#666666",
+                              color: "#8b949e",
                               mb: 1,
                               fontSize: "0.95rem",
                               lineHeight: 1.6
@@ -363,8 +339,8 @@ const Qualification = () => {
                               label={item.date}
                               size="small"
                               sx={{
-                                background: "rgba(102, 126, 234, 0.1)",
-                                color: "#667eea"
+                                background: "rgba(14, 173, 223, 0.1)",
+                                color: "#0eaddf"
                               }}
                             />
                           </Box>
@@ -378,12 +354,12 @@ const Qualification = () => {
 
             <TabPanel value={value} index={1}>
               <Grid container spacing={3}>
-                {experience.map((item, index) => (
+                {experience.map((item: ExperienceItem, index: number) => (
                   <Grid size={{ xs: 12, md: 6 }} key={index}>
                     <Card
                       sx={{
                         height: "100%",
-                        background: "white",
+                        background: "#161616",
                         border: `2px solid ${getTypeColor(item.type)}30`,
                         borderRadius: 2,
                         transition: "all 0.3s ease",
@@ -403,7 +379,7 @@ const Qualification = () => {
                             sx={{
                               width: 48,
                               height: 48,
-                              background: `linear-gradient(135deg, ${getTypeColor(item.type)}20 0%, ${getTypeColor(item.type)}10 100%)`,
+                              background: `${getTypeColor(item.type)}20`,
                               color: getTypeColor(item.type),
                               mr: 2,
                               border: `2px solid ${getTypeColor(item.type)}30`
@@ -417,7 +393,7 @@ const Qualification = () => {
                               sx={{
                                 fontWeight: 700,
                                 mb: 0.5,
-                                color: "#1a1a1a",
+                                color: "#e6edf3",
                                 fontSize: "1.1rem"
                               }}
                             >
@@ -426,7 +402,7 @@ const Qualification = () => {
                             <Typography
                               variant="body2"
                               sx={{
-                                color: "#666666",
+                                color: "#8b949e",
                                 mb: 1,
                                 fontSize: "0.95rem",
                                 lineHeight: 1.5
@@ -450,7 +426,7 @@ const Qualification = () => {
 
                         {item.skills && (
                           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
-                            {item.skills.map((skill, idx) => (
+                            {item.skills.map((skill: string, idx: number) => (
                               <Chip
                                 key={idx}
                                 label={skill}
@@ -476,7 +452,7 @@ const Qualification = () => {
                           width: 60,
                           height: 60,
                           borderRadius: "50%",
-                          background: `linear-gradient(135deg, ${getTypeColor(item.type)}15 0%, ${getTypeColor(item.type)}05 100%)`,
+                          background: `${getTypeColor(item.type)}15`,
                           filter: "blur(20px)"
                         }}
                       />

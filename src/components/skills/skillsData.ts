@@ -1,5 +1,16 @@
 // Skills data with actual technology logos
-export const skillsData = [
+
+export interface Skill {
+  id: number;
+  name: string;
+  icon: string;
+  description: string;
+  level: "beginner" | "intermediate" | "advanced" | "expert";
+  category: "frontend" | "backend" | "database" | "tools";
+  projects?: string[];
+}
+
+export const skillsData: Skill[] = [
   // Frontend Technologies - Languages and Frameworks first
   {
     id: 1,
@@ -196,10 +207,10 @@ export const skillsData = [
 ];
 
 // Helper functions
-export const getSkillsByCategory = (category) => {
+export const getSkillsByCategory = (category: string): Skill[] => {
   return skillsData.filter(skill => skill.category === category);
 };
 
-export const getCategories = () => {
-  return [...new Set(skillsData.map(skill => skill.category))];
+export const getCategories = (): string[] => {
+  return Array.from(new Set(skillsData.map(skill => skill.category)));
 };

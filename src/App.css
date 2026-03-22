@@ -14,7 +14,7 @@
   --primary-color: hsl(var(--primary-hue), 85%, 55%);
   --primary-color-light: hsl(var(--primary-hue), 85%, 65%);
   --primary-color-dark: hsl(var(--primary-hue), 85%, 45%);
-  --primary-gradient: linear-gradient(135deg, hsl(var(--primary-hue), 85%, 55%), hsl(var(--primary-hue), 85%, 65%));
+  --primary-gradient: #0eaddf;
 
   /* Background Colors */
   --bg-primary: hsl(220, 13%, 9%);

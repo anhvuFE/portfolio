@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -16,14 +16,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Paper,
-  Chip,
   Avatar
 } from "@mui/material";
 import {
-  Code as CodeIcon,
-  Storage as ServerIcon,
-  Devices as DevicesIcon,
   CheckCircle as CheckIcon,
   Close as CloseIcon,
   ArrowForward as ArrowIcon,
@@ -31,68 +26,71 @@ import {
   Api as ApiIcon,
   Cloud as CloudIcon
 } from "@mui/icons-material";
-import { keyframes } from "@emotion/react";
 
-const float = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-`;
+interface ServiceItem {
+  id: number;
+  icon: React.ReactNode;
+  color: string;
+  title: string;
+  description: string;
+  features: string[];
+}
 
-const Services = () => {
-  const [activeModal, setActiveModal] = useState(null);
+const services: ServiceItem[] = [
+  {
+    id: 1,
+    icon: <WebIcon sx={{ fontSize: 40 }} />,
+    color: "#0eaddf",
+    title: "Frontend Development",
+    description: "Modern web applications with React & JavaScript",
+    features: [
+      "Responsive UI/UX development with HTML5, CSS3, JavaScript ES6+",
+      "Modern React applications with hooks and state management",
+      "Interactive user interfaces with smooth animations",
+      "Performance optimization and SEO implementation",
+      "Cross-browser compatibility and mobile-first design"
+    ]
+  },
+  {
+    id: 2,
+    icon: <ApiIcon sx={{ fontSize: 40 }} />,
+    color: "#0c8db3",
+    title: "Backend Development",
+    description: "Robust server-side solutions with Node.js & Python",
+    features: [
+      "RESTful API development with Node.js and Express",
+      "Database design and optimization with MongoDB & PostgreSQL",
+      "Microservices architecture and cloud deployment",
+      "Authentication and authorization systems",
+      "Performance monitoring and error handling"
+    ]
+  },
+  {
+    id: 3,
+    icon: <CloudIcon sx={{ fontSize: 40 }} />,
+    color: "#00bcd4",
+    title: "Full-Stack Solutions",
+    description: "End-to-end web application development",
+    features: [
+      "Complete MERN stack development (MongoDB, Express, React, Node.js)",
+      "E-commerce platforms with payment integration",
+      "Content Management Systems (CMS) and admin panels",
+      "Real-time applications with WebSocket connectivity",
+      "DevOps and CI/CD pipeline implementation"
+    ]
+  }
+];
 
-  const services = [
-    {
-      id: 1,
-      icon: <WebIcon sx={{ fontSize: 40 }} />,
-      color: "#667eea",
-      title: "Frontend Development",
-      description: "Modern web applications with React & JavaScript",
-      features: [
-        "Responsive UI/UX development with HTML5, CSS3, JavaScript ES6+",
-        "Modern React applications with hooks and state management",
-        "Interactive user interfaces with smooth animations",
-        "Performance optimization and SEO implementation",
-        "Cross-browser compatibility and mobile-first design"
-      ]
-    },
-    {
-      id: 2,
-      icon: <ApiIcon sx={{ fontSize: 40 }} />,
-      color: "#764ba2",
-      title: "Backend Development",
-      description: "Robust server-side solutions with Node.js & Python",
-      features: [
-        "RESTful API development with Node.js and Express",
-        "Database design and optimization with MongoDB & PostgreSQL",
-        "Microservices architecture and cloud deployment",
-        "Authentication and authorization systems",
-        "Performance monitoring and error handling"
-      ]
-    },
-    {
-      id: 3,
-      icon: <CloudIcon sx={{ fontSize: 40 }} />,
-      color: "#00bcd4",
-      title: "Full-Stack Solutions",
-      description: "End-to-end web application development",
-      features: [
-        "Complete MERN stack development (MongoDB, Express, React, Node.js)",
-        "E-commerce platforms with payment integration",
-        "Content Management Systems (CMS) and admin panels",
-        "Real-time applications with WebSocket connectivity",
-        "DevOps and CI/CD pipeline implementation"
-      ]
-    }
-  ];
+const Services: React.FC = () => {
+  const [activeModal, setActiveModal] = useState<number | null>(null);
 
-  const openModal = (serviceId) => {
+  const openModal = useCallback((serviceId: number): void => {
     setActiveModal(serviceId);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback((): void => {
     setActiveModal(null);
-  };
+  }, []);
 
   return (
     <Box
@@ -100,7 +98,7 @@ const Services = () => {
       id="services"
       sx={{
         py: { xs: 8, md: 12 },
-        background: "linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)",
+        background: "#0a0a0a",
         minHeight: "100vh"
       }}
     >
@@ -112,10 +110,7 @@ const Services = () => {
               fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
               fontWeight: 700,
               mb: 2,
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
+              color: "#0eaddf"
             }}
           >
             Services
@@ -123,7 +118,7 @@ const Services = () => {
           <Typography
             variant="h6"
             sx={{
-              color: "text.secondary",
+              color: "#8b949e",
               fontWeight: 400,
               maxWidth: 600,
               mx: "auto"
@@ -141,9 +136,9 @@ const Services = () => {
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  background: "rgba(255, 255, 255, 0.95)",
+                  background: "rgba(22, 22, 22, 0.95)",
                   backdropFilter: "blur(20px)",
-                  border: "1px solid rgba(0, 0, 0, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: 3,
                   transition: "all 0.3s ease",
                   position: "relative",
@@ -165,7 +160,7 @@ const Services = () => {
                       sx={{
                         width: 80,
                         height: 80,
-                        background: `linear-gradient(135deg, ${service.color}15 0%, ${service.color}08 100%)`,
+                        background: `${service.color}15`,
                         color: service.color,
                         border: `2px solid ${service.color}20`,
                         transition: "transform 0.3s ease",
@@ -181,7 +176,7 @@ const Services = () => {
                     sx={{
                       fontWeight: 600,
                       mb: 2,
-                      color: "text.primary"
+                      color: "#e6edf3"
                     }}
                   >
                     {service.title}
@@ -190,7 +185,7 @@ const Services = () => {
                   <Typography
                     variant="body1"
                     sx={{
-                      color: "text.secondary",
+                      color: "#8b949e",
                       mb: 3,
                       lineHeight: 1.6
                     }}
@@ -208,7 +203,7 @@ const Services = () => {
                           primary={feature}
                           primaryTypographyProps={{
                             fontSize: "0.9rem",
-                            color: "text.secondary"
+                            color: "#8b949e"
                           }}
                         />
                       </ListItem>
@@ -251,7 +246,7 @@ const Services = () => {
                     width: 100,
                     height: 100,
                     borderRadius: "50%",
-                    background: `linear-gradient(135deg, ${service.color}15 0%, ${service.color}05 100%)`,
+                    background: `${service.color}15`,
                     filter: "blur(30px)",
                     zIndex: -1
                   }}
@@ -272,7 +267,7 @@ const Services = () => {
             PaperProps={{
               sx: {
                 borderRadius: 3,
-                background: "rgba(255, 255, 255, 0.98)",
+                background: "rgba(17, 17, 17, 0.98)",
                 backdropFilter: "blur(20px)"
               }
             }}
@@ -283,28 +278,28 @@ const Services = () => {
                 alignItems: "center",
                 gap: 2,
                 pb: 1,
-                borderBottom: "1px solid rgba(0, 0, 0, 0.08)"
+                borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
               }}
             >
               <Avatar
                 sx={{
                   width: 56,
                   height: 56,
-                  background: `linear-gradient(135deg, ${service.color}15 0%, ${service.color}08 100%)`,
+                  background: `${service.color}15`,
                   color: service.color
                 }}
               >
                 {service.icon}
               </Avatar>
               <Box sx={{ flex: 1 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: "#e6edf3" }}>
                   {service.title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ color: "#8b949e" }}>
                   {service.description}
                 </Typography>
               </Box>
-              <IconButton onClick={closeModal} sx={{ color: "text.secondary" }}>
+              <IconButton onClick={closeModal} sx={{ color: "#8b949e" }}>
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
@@ -330,7 +325,8 @@ const Services = () => {
                       primary={feature}
                       primaryTypographyProps={{
                         fontSize: "1rem",
-                        lineHeight: 1.6
+                        lineHeight: 1.6,
+                        color: "#e6edf3"
                       }}
                     />
                   </ListItem>
@@ -338,13 +334,13 @@ const Services = () => {
               </List>
             </DialogContent>
 
-            <DialogActions sx={{ px: 3, py: 2.5, borderTop: "1px solid rgba(0, 0, 0, 0.08)" }}>
+            <DialogActions sx={{ px: 3, py: 2.5, borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
               <Button
                 variant="outlined"
                 onClick={closeModal}
                 sx={{
-                  borderColor: "text.disabled",
-                  color: "text.secondary",
+                  borderColor: "rgba(255, 255, 255, 0.08)",
+                  color: "#8b949e",
                   mr: 1
                 }}
               >
@@ -355,8 +351,13 @@ const Services = () => {
                 href="#contact"
                 onClick={closeModal}
                 sx={{
-                  background: `linear-gradient(135deg, ${service.color} 0%, ${service.color}dd 100%)`,
-                  px: 3
+                  background: service.color,
+                  color: "#0a0a0a",
+                  px: 3,
+                  "&:hover": {
+                    background: service.color,
+                    opacity: 0.9
+                  }
                 }}
               >
                 Get Started

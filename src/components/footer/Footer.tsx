@@ -7,7 +7,6 @@ import {
   IconButton,
   Link,
   Divider,
-  Paper
 } from "@mui/material";
 import {
   GitHub as GitHubIcon,
@@ -18,22 +17,39 @@ import {
   LocationOn as LocationIcon,
   ArrowUpward as ArrowUpIcon
 } from "@mui/icons-material";
-import Sakura from "../sakura/Sakura";
+import MatrixRain from "../sakura/MatrixRain";
 import { keyframes } from "@emotion/react";
+
+interface QuickLink {
+  name: string;
+  href: string;
+}
+
+interface SocialLink {
+  name: string;
+  icon: React.ReactNode;
+  href: string;
+  color: string;
+}
+
+interface ContactInfo {
+  icon: React.ReactNode;
+  text: string;
+}
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 `;
 
-const Footer = () => {
-  const scrollToTop = () => {
+const Footer: React.FC = () => {
+  const scrollToTop = (): void => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const currentYear = new Date().getFullYear();
+  const currentYear: number = new Date().getFullYear();
 
-  const quickLinks = [
+  const quickLinks: QuickLink[] = [
     { name: "About", href: "#about" },
     { name: "Skills", href: "#skills" },
     { name: "Services", href: "#services" },
@@ -42,7 +58,7 @@ const Footer = () => {
     { name: "Certificates", href: "#certificates" }
   ];
 
-  const socialLinks = [
+  const socialLinks: SocialLink[] = [
     {
       name: "GitHub",
       icon: <GitHubIcon />,
@@ -65,11 +81,11 @@ const Footer = () => {
       name: "Email",
       icon: <EmailIcon />,
       href: "mailto:vuxuananh2312@gmail.com",
-      color: "#667eea"
+      color: "#0eaddf"
     }
   ];
 
-  const contactInfo = [
+  const contactInfo: ContactInfo[] = [
     {
       icon: <PhoneIcon />,
       text: "+84 982 168 318"
@@ -95,7 +111,7 @@ const Footer = () => {
         overflow: "hidden"
       }}
     >
-      <Sakura />
+      <MatrixRain />
 
       {/* Scroll to Top Button */}
       <IconButton
@@ -104,15 +120,15 @@ const Footer = () => {
           position: "fixed",
           bottom: 80,
           right: 30,
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background: "#0eaddf",
           color: "white",
           width: 56,
           height: 56,
-          boxShadow: "0 8px 24px rgba(102, 126, 234, 0.4)",
+          boxShadow: "0 8px 24px rgba(14, 173, 223, 0.4)",
           animation: `${float} 3s ease-in-out infinite`,
           zIndex: 1000,
           "&:hover": {
-            background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+            background: "#0c8db3",
             transform: "scale(1.1)"
           }
         }}
@@ -130,10 +146,7 @@ const Footer = () => {
               sx={{
                 fontWeight: 700,
                 mb: 2,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent"
+                color: "#0eaddf"
               }}
             >
               Vũ Xuân Anh
@@ -162,7 +175,7 @@ const Footer = () => {
 
             {/* Social Links */}
             <Box sx={{ display: "flex", gap: 1 }}>
-              {socialLinks.map((social) => (
+              {socialLinks.map((social: SocialLink) => (
                 <IconButton
                   key={social.name}
                   href={social.href}
@@ -202,14 +215,14 @@ const Footer = () => {
                   left: 0,
                   width: 50,
                   height: 3,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  background: "#0eaddf"
                 }
               }}
             >
               Quick Links
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-              {quickLinks.map((link) => (
+              {quickLinks.map((link: QuickLink) => (
                 <Link
                   key={link.name}
                   href={link.href}
@@ -229,7 +242,7 @@ const Footer = () => {
                       transition: "all 0.3s ease"
                     },
                     "&:hover": {
-                      color: "#667eea",
+                      color: "#0eaddf",
                       pl: 3,
                       "&::before": {
                         opacity: 1,
@@ -260,14 +273,14 @@ const Footer = () => {
                   left: 0,
                   width: 50,
                   height: 3,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  background: "#0eaddf"
                 }
               }}
             >
               Contact Info
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {contactInfo.map((info, index) => (
+              {contactInfo.map((info: ContactInfo, index: number) => (
                 <Box
                   key={index}
                   sx={{
@@ -282,11 +295,11 @@ const Footer = () => {
                       width: 40,
                       height: 40,
                       borderRadius: 2,
-                      background: "rgba(102, 126, 234, 0.15)",
+                      background: "rgba(14, 173, 223, 0.15)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#667eea"
+                      color: "#0eaddf"
                     }}
                   >
                     {info.icon}
@@ -343,7 +356,7 @@ const Footer = () => {
           width: 300,
           height: 300,
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background: "#0eaddf",
           opacity: 0.05,
           filter: "blur(60px)"
         }}
@@ -356,7 +369,7 @@ const Footer = () => {
           width: 200,
           height: 200,
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+          background: "#0eaddf",
           opacity: 0.05,
           filter: "blur(40px)"
         }}

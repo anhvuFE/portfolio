@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Box, Container, Paper, IconButton, Typography, Button } from "@mui/material";
 import { GitHub, Facebook, LinkedIn, Email, ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
 import ConstellationBackground from "./ConstellationBackground";
-import NewAvatar from "../../assets/new-avt.png";
+import NewAvatar from "../../assets/avatar.jpg";
 import "./home.css";
 
 const float = keyframes`
@@ -16,10 +16,38 @@ const bounce = keyframes`
   50% { transform: translateY(-10px); }
 `;
 
-const Home = () => {
+interface StatItem {
+  value: string;
+  label: string;
+}
+
+interface SocialLink {
+  icon: React.ReactElement;
+  href: string;
+  label: string;
+}
+
+const roles = ["Full Stack Developer", "Software Engineer", "React & TypeScript Expert"];
+
+const stats: StatItem[] = [
+  { value: "3+", label: "Years Experience" },
+  { value: "4", label: "Companies" },
+  { value: "10+", label: "Technologies" },
+];
+
+const socialLinks: SocialLink[] = [
+  { icon: <GitHub />, href: "https://github.com/anhvuFE", label: "GitHub" },
+  { icon: <Facebook />, href: "https://www.facebook.com/xuananhvu2312/", label: "Facebook" },
+  { icon: <LinkedIn />, href: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/", label: "LinkedIn" }
+];
+
+const Home: React.FC = () => {
   const [displayText, setDisplayText] = React.useState("");
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const roles = ["Full Stack Developer", "React & Node.js Expert", "Software Engineer"];
+
+  const handleRoleChange = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % roles.length);
+  }, []);
 
   React.useEffect(() => {
     const currentRole = roles[currentIndex];
@@ -29,26 +57,61 @@ const Home = () => {
       index++;
       if (index > currentRole.length) {
         clearInterval(timer);
-        setTimeout(() => {
-          setCurrentIndex((prev) => (prev + 1) % roles.length);
-        }, 2000);
+        setTimeout(handleRoleChange, 2000);
       }
     }, 100);
 
     return () => clearInterval(timer);
-  }, [currentIndex]);
+  }, [currentIndex, handleRoleChange]);
 
-  const stats = [
-    { value: "2+", label: "Years Experience" },
-    { value: "28+", label: "GitHub Projects" },
-    { value: "10+", label: "Technologies" },
-  ];
+  const statsRendered = useMemo(
+    () =>
+      stats.map((stat, index) => (
+        <Box key={index} sx={{ textAlign: "center" }}>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 700,
+              color: "#0eaddf"
+            }}
+          >
+            {stat.value}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#6e7681" }}>
+            {stat.label}
+          </Typography>
+        </Box>
+      )),
+    []
+  );
 
-  const socialLinks = [
-    { icon: <GitHub />, href: "https://github.com/anhvuFE", label: "GitHub" },
-    { icon: <Facebook />, href: "https://www.facebook.com/xuananhvu2312/", label: "Facebook" },
-    { icon: <LinkedIn />, href: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/", label: "LinkedIn" }
-  ];
+  const socialLinksRendered = useMemo(
+    () =>
+      socialLinks.map((social, index) => (
+        <IconButton
+          key={index}
+          href={social.href}
+          target="_blank"
+          sx={{
+            width: 50,
+            height: 50,
+            border: "2px solid rgba(14, 173, 223, 0.2)",
+            background: "rgba(22, 22, 22, 0.9)",
+            color: "#0eaddf",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              background: "#0eaddf",
+              color: "#0a0a0a",
+              boxShadow: "0 10px 20px rgba(14, 173, 223, 0.3)"
+            }
+          }}
+        >
+          {social.icon}
+        </IconButton>
+      )),
+    []
+  );
 
   return (
     <Box
@@ -60,7 +123,7 @@ const Home = () => {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"
+        background: "#0a0a0a"
       }}
     >
       <ConstellationBackground />
@@ -89,7 +152,8 @@ const Home = () => {
               sx={{
                 p: 1,
                 borderRadius: "24px",
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                background: "#161616",
+                border: "2px solid rgba(14, 173, 223, 0.2)",
                 position: "relative",
                 overflow: "visible"
               }}
@@ -102,8 +166,8 @@ const Home = () => {
                   width: { xs: 280, sm: 320, md: 360 },
                   height: { xs: 280, sm: 320, md: 360 },
                   borderRadius: "20px",
-                  border: "4px solid white",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                  border: "4px solid rgba(255, 255, 255, 0.1)",
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
                   objectFit: "cover",
                   objectPosition: "center 20%",
                   display: "block"
@@ -113,29 +177,7 @@ const Home = () => {
 
             {/* Social Links */}
             <Box sx={{ display: "flex", gap: 2 }}>
-              {socialLinks.map((social, index) => (
-                <IconButton
-                  key={index}
-                  href={social.href}
-                  target="_blank"
-                  sx={{
-                    width: 50,
-                    height: 50,
-                    border: "2px solid rgba(102, 126, 234, 0.3)",
-                    background: "rgba(255, 255, 255, 0.9)",
-                    color: "#667eea",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      color: "white",
-                      boxShadow: "0 10px 20px rgba(102, 126, 234, 0.4)"
-                    }
-                  }}
-                >
-                  {social.icon}
-                </IconButton>
-              ))}
+              {socialLinksRendered}
             </Box>
           </Box>
 
@@ -144,7 +186,7 @@ const Home = () => {
             <Typography
               variant="h6"
               sx={{
-                color: "rgba(0, 0, 0, 0.6)",
+                color: "#8b949e",
                 mb: 2,
                 fontWeight: 500
               }}
@@ -158,10 +200,7 @@ const Home = () => {
                 fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
                 fontWeight: 800,
                 mb: 2,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent"
+                color: "#0eaddf"
               }}
             >
               Vũ Xuân Anh
@@ -173,12 +212,12 @@ const Home = () => {
                 fontSize: { xs: "1.5rem", md: "2rem" },
                 fontWeight: 600,
                 mb: 3,
-                color: "#667eea",
+                color: "#0eaddf",
                 minHeight: "40px"
               }}
             >
               {displayText}
-              <span style={{ animation: "blink 1s infinite" }}>|</span>
+              <span style={{ animation: "blink 1s infinite", color: "#0eaddf" }}>|</span>
             </Typography>
 
             <Typography
@@ -186,37 +225,19 @@ const Home = () => {
               sx={{
                 fontSize: "1.1rem",
                 lineHeight: 1.8,
-                color: "rgba(0, 0, 0, 0.7)",
+                color: "#8b949e",
                 mb: 4,
                 maxWidth: 600
               }}
             >
-              I build end-to-end web applications with modern technologies.
-              Passionate about clean architecture, scalable solutions, and delivering
-              full-stack applications from database to deployment.
+              Full Stack Developer with 3+ years of experience building modern, responsive web applications.
+              Passionate about clean code, intuitive design, and delivering high-quality products
+              in Agile environments.
             </Typography>
 
             {/* Stats */}
             <Box sx={{ display: "flex", gap: 4, mb: 4, flexWrap: "wrap" }}>
-              {stats.map((stat, index) => (
-                <Box key={index} sx={{ textAlign: "center" }}>
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      fontWeight: 700,
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      backgroundClip: "text",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent"
-                    }}
-                  >
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                    {stat.label}
-                  </Typography>
-                </Box>
-              ))}
+              {statsRendered}
             </Box>
 
             {/* CTA Buttons */}
@@ -227,17 +248,19 @@ const Home = () => {
                 href="#contact"
                 endIcon={<Email />}
                 sx={{
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: "#0eaddf",
                   px: 4,
                   py: 1.5,
                   borderRadius: 3,
                   textTransform: "none",
                   fontSize: "1rem",
                   fontWeight: 600,
-                  boxShadow: "0 10px 20px rgba(102, 126, 234, 0.3)",
+                  color: "#0a0a0a",
+                  boxShadow: "0 10px 20px rgba(14, 173, 223, 0.2)",
                   "&:hover": {
+                    background: "#0c8db3",
                     transform: "translateY(-2px)",
-                    boxShadow: "0 15px 30px rgba(102, 126, 234, 0.4)"
+                    boxShadow: "0 15px 30px rgba(14, 173, 223, 0.3)"
                   }
                 }}
               >
@@ -249,8 +272,8 @@ const Home = () => {
                 href="#about"
                 endIcon={<ArrowForward />}
                 sx={{
-                  borderColor: "#667eea",
-                  color: "#667eea",
+                  borderColor: "#0eaddf",
+                  color: "#0eaddf",
                   px: 4,
                   py: 1.5,
                   borderRadius: 3,
@@ -260,7 +283,8 @@ const Home = () => {
                   borderWidth: 2,
                   "&:hover": {
                     borderWidth: 2,
-                    background: "rgba(102, 126, 234, 0.1)",
+                    borderColor: "#3dc4ee",
+                    background: "rgba(14, 173, 223, 0.1)",
                     transform: "translateY(-2px)"
                   }
                 }}
@@ -288,7 +312,7 @@ const Home = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "#667eea",
+              color: "#0eaddf",
               fontWeight: 500,
               textTransform: "uppercase",
               letterSpacing: 1
@@ -296,7 +320,7 @@ const Home = () => {
           >
             Scroll Down
           </Typography>
-          <KeyboardArrowDown sx={{ color: "#667eea", fontSize: 30 }} />
+          <KeyboardArrowDown sx={{ color: "#0eaddf", fontSize: 30 }} />
         </Box>
       </Container>
     </Box>
