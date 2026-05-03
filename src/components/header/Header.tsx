@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   AppBar,
   Toolbar,
@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "services", label: "Services" },
-  { id: "portfolio", label: "Experience" },
+  { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -39,7 +39,6 @@ const Header: React.FC = () => {
   const [activeSection, setActiveSection] = useState("home");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const lastScrollTimeRef = useRef<number>(0);
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -47,39 +46,28 @@ const Header: React.FC = () => {
   });
 
   useEffect(() => {
-    const handleScroll = () => {
-      const now = Date.now();
-      if (now - lastScrollTimeRef.current < 100) {
-        return;
-      }
-      lastScrollTimeRef.current = now;
-
-      const sections = document.querySelectorAll("section[id]");
-      const scrollPosition = window.scrollY + 200;
-
-      sections.forEach((section) => {
-        const el = section as HTMLElement;
-        const sectionTop = el.offsetTop;
-        const sectionHeight = el.offsetHeight;
-        const sectionId = el.getAttribute("id");
-
-        if (scrollPosition >= sectionTop && scrollPosition <= sectionTop + sectionHeight) {
-          setActiveSection(sectionId || "");
-        }
-      });
+    const syncActive = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) setActiveSection(hash);
+      else setActiveSection("home");
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    syncActive();
+    window.addEventListener("hashchange", syncActive);
+    return () => window.removeEventListener("hashchange", syncActive);
   }, []);
 
   const handleNavClick = useCallback((sectionId: string) => {
     setActiveSection(sectionId);
     setIsMenuOpen(false);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (sectionId === "home") {
+      if (window.location.hash) {
+        window.history.pushState(null, "", window.location.pathname + window.location.search);
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
+    window.location.hash = sectionId;
   }, []);
 
   return (
