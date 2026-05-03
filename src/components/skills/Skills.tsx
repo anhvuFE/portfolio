@@ -90,7 +90,7 @@ const Skills: React.FC = () => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const categories: string[] = ["all", ...getCategories()];
+  const categories: string[] = useMemo(() => ["all", ...getCategories()], []);
 
   const filteredSkills = useMemo((): Skill[] => {
     const category = categories[activeCategory];
