@@ -10,7 +10,9 @@ import {
   Chip,
   Paper,
   Grid,
-  Avatar
+  Avatar,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import {
   Timeline,
@@ -141,6 +143,8 @@ const getTypeColor = (type: string): string => {
 
 const Qualification: React.FC = () => {
   const [value, setValue] = useState<number>(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleChange = useCallback((_event: React.SyntheticEvent, newValue: number): void => {
     setValue(newValue);
@@ -223,10 +227,10 @@ const Qualification: React.FC = () => {
               sx={{
                 textTransform: "none",
                 fontWeight: value === 0 ? 600 : 500,
-                fontSize: "1rem",
+                fontSize: { xs: "0.9rem", md: "1rem" },
                 color: value === 0 ? "#0eaddf" : "#8b949e",
                 minHeight: 64,
-                px: 4
+                px: { xs: 2, md: 4 }
               }}
             />
             <Tab
@@ -236,17 +240,25 @@ const Qualification: React.FC = () => {
               sx={{
                 textTransform: "none",
                 fontWeight: value === 1 ? 600 : 500,
-                fontSize: "1rem",
+                fontSize: { xs: "0.9rem", md: "1rem" },
                 color: value === 1 ? "#0eaddf" : "#8b949e",
                 minHeight: 64,
-                px: 4
+                px: { xs: 2, md: 4 }
               }}
             />
           </Tabs>
 
           <Box sx={{ p: { xs: 2, md: 4 } }}>
             <TabPanel value={value} index={0}>
-              <Timeline position="alternate">
+              <Timeline
+                position={isMobile ? "right" : "alternate"}
+                sx={{
+                  ...(isMobile && {
+                    pl: 0,
+                    "& .MuiTimelineItem-root::before": { flex: 0, padding: 0 }
+                  })
+                }}
+              >
                 {education.map((item: EducationItem, index: number) => (
                   <TimelineItem key={index}>
                     <TimelineOppositeContent
