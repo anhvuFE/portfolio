@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const currentYear: number = new Date().getFullYear();
+  const currentYear: number = 2025;
 
   const quickLinks: QuickLink[] = [
     { name: "About", href: "#about" },
@@ -140,7 +140,7 @@ const Footer: React.FC = () => {
         {/* Main Footer Content */}
         <Grid container spacing={4} sx={{ mb: 6 }}>
           {/* Brand Section */}
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
             <Typography
               variant="h4"
               sx={{
@@ -174,7 +174,7 @@ const Footer: React.FC = () => {
             </Typography>
 
             {/* Social Links */}
-            <Box sx={{ display: "flex", gap: 1 }}>
+            <Box sx={{ display: "flex", gap: 1, justifyContent: { xs: "center", md: "flex-start" } }}>
               {socialLinks.map((social: SocialLink) => (
                 <IconButton
                   key={social.name}
@@ -200,7 +200,7 @@ const Footer: React.FC = () => {
           </Grid>
 
           {/* Quick Links */}
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ textAlign: { xs: "center", sm: "left" } }}>
             <Typography
               variant="h6"
               sx={{
@@ -208,11 +208,13 @@ const Footer: React.FC = () => {
                 mb: 3,
                 color: "white",
                 position: "relative",
+                display: "inline-block",
                 "&::after": {
                   content: '""',
                   position: "absolute",
                   bottom: -8,
-                  left: 0,
+                  left: { xs: "50%", sm: 0 },
+                  transform: { xs: "translateX(-50%)", sm: "none" },
                   width: 50,
                   height: 3,
                   background: "#0eaddf"
@@ -221,7 +223,7 @@ const Footer: React.FC = () => {
             >
               Quick Links
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, alignItems: { xs: "center", sm: "flex-start" } }}>
               {quickLinks.map((link: QuickLink) => (
                 <Link
                   key={link.name}
@@ -258,7 +260,7 @@ const Footer: React.FC = () => {
           </Grid>
 
           {/* Contact Info */}
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ textAlign: { xs: "center", sm: "left" } }}>
             <Typography
               variant="h6"
               sx={{
@@ -266,11 +268,13 @@ const Footer: React.FC = () => {
                 mb: 3,
                 color: "white",
                 position: "relative",
+                display: "inline-block",
                 "&::after": {
                   content: '""',
                   position: "absolute",
                   bottom: -8,
-                  left: 0,
+                  left: { xs: "50%", sm: 0 },
+                  transform: { xs: "translateX(-50%)", sm: "none" },
                   width: 50,
                   height: 3,
                   background: "#0eaddf"
@@ -279,7 +283,7 @@ const Footer: React.FC = () => {
             >
               Contact Info
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: { xs: "center", sm: "flex-start" } }}>
               {contactInfo.map((info: ContactInfo, index: number) => (
                 <Box
                   key={index}

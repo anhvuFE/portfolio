@@ -82,19 +82,40 @@ const Certificate: React.FC = () => {
   const maxScroll = totalWidth - (typeof window !== "undefined" ? window.innerWidth * 0.7 : 800);
 
   const handleNext = useCallback(() => {
+    if (isMobile && scrollRef.current) {
+      const el = scrollRef.current;
+      const step = cardWidth + GAP;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 10;
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: step, behavior: "smooth" });
+      }
+      return;
+    }
     setScrollX((prev) => {
       const next = prev + cardWidth + GAP;
       if (next > maxScroll) return 0;
       return next;
     });
-  }, [maxScroll, cardWidth]);
+  }, [isMobile, maxScroll, cardWidth]);
 
   const handlePrev = useCallback(() => {
+    if (isMobile && scrollRef.current) {
+      const el = scrollRef.current;
+      const step = cardWidth + GAP;
+      if (el.scrollLeft <= 10) {
+        el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: -step, behavior: "smooth" });
+      }
+      return;
+    }
     setScrollX((prev) => {
       if (prev <= 0) return maxScroll > 0 ? maxScroll : 0;
       return prev - cardWidth - GAP;
     });
-  }, [maxScroll, cardWidth]);
+  }, [isMobile, maxScroll, cardWidth]);
 
   const openModal = useCallback((cert: CertificateItem) => {
     setSelectedCertificate(cert);
@@ -107,10 +128,10 @@ const Certificate: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (modalOpen) return;
+    if (modalOpen || isMobile) return;
     const interval = setInterval(handleNext, 4000);
     return () => clearInterval(interval);
-  }, [modalOpen, handleNext]);
+  }, [modalOpen, handleNext, isMobile]);
 
   // Build SVG connector paths
   const connectorPaths = certificates.slice(0, -1).map((_, i) => {
@@ -160,8 +181,11 @@ const Certificate: React.FC = () => {
           {/* Navigation */}
           <IconButton
             onClick={handlePrev}
+            aria-label="Previous certificate"
             sx={{
-              position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
+              position: "absolute",
+              left: { xs: 4, md: 0 },
+              top: "50%", transform: "translateY(-50%)",
               zIndex: 5, width: 40, height: 40,
               background: "rgba(22, 22, 22, 0.95)", border: "1px solid rgba(14, 173, 223, 0.2)",
               color: "#0eaddf", backdropFilter: "blur(8px)",
@@ -172,8 +196,11 @@ const Certificate: React.FC = () => {
           </IconButton>
           <IconButton
             onClick={handleNext}
+            aria-label="Next certificate"
             sx={{
-              position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)",
+              position: "absolute",
+              right: { xs: 4, md: 0 },
+              top: "50%", transform: "translateY(-50%)",
               zIndex: 5, width: 40, height: 40,
               background: "rgba(22, 22, 22, 0.95)", border: "1px solid rgba(14, 173, 223, 0.2)",
               color: "#0eaddf", backdropFilter: "blur(8px)",
@@ -183,18 +210,30 @@ const Certificate: React.FC = () => {
             <NextIcon />
           </IconButton>
 
-          {/* Scrollable zigzag */}
+          {/* Scrollable container — translateX on desktop, native horizontal scroll on mobile */}
           <Box
             ref={scrollRef}
-            sx={{ overflow: "hidden", mx: 6 }}
+            sx={{
+              overflowX: { xs: "auto", md: "hidden" },
+              overflowY: "hidden",
+              mx: { xs: 0, md: 6 },
+              px: { xs: 5, md: 0 },
+              scrollSnapType: { xs: "x mandatory", md: "none" },
+              WebkitOverflowScrolling: "touch",
+              "&::-webkit-scrollbar": { display: "none" },
+              scrollbarWidth: "none"
+            }}
           >
             <Box
               sx={{
                 position: "relative",
-                width: totalWidth,
+                display: { xs: "flex", md: "block" },
+                flexDirection: { xs: "row", md: "unset" },
+                gap: { xs: `${GAP}px`, md: 0 },
+                width: { xs: "max-content", md: totalWidth },
                 height: { xs: "auto", md: stripHeight },
                 transition: "transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)",
-                transform: `translateX(-${scrollX}px)`
+                transform: { xs: "none", md: `translateX(-${scrollX}px)` }
               }}
             >
               {/* SVG connectors overlay */}
@@ -242,8 +281,8 @@ const Certificate: React.FC = () => {
                       left: { xs: "auto", md: left },
                       top: { xs: "auto", md: isDown ? OFFSET_Y : 0 },
                       width: cardWidth,
-                      mb: { xs: 3, md: 0 },
-                      display: { xs: index < 4 ? "block" : "none", md: "block" },
+                      flexShrink: 0,
+                      scrollSnapAlign: { xs: "center", md: "none" },
                       zIndex: 2
                     }}
                   >
@@ -340,8 +379,9 @@ const Certificate: React.FC = () => {
             </Box>
           </Box>
 
-          {/* Progress bar */}
+          {/* Progress bar - desktop only */}
           <Box sx={{
+            display: { xs: "none", md: "block" },
             mt: 4, mx: "auto", width: 200, height: 3,
             borderRadius: 2, background: "rgba(255, 255, 255, 0.08)"
           }}>

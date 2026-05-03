@@ -560,3 +560,13 @@
     font-size: var(--fs-xs);
   }
 }
+
+
+.contact-form-card .ant-card-body {
+  padding: 32px;
+}
+@media (max-width: 600px) {
+  .contact-form-card .ant-card-body {
+    padding: 16px;
+  }
+}

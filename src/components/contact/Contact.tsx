@@ -150,7 +150,7 @@ const Contact: React.FC = () => {
             <Title
               level={1}
               style={{
-                fontSize: "3rem",
+                fontSize: "clamp(2rem, 5vw + 1rem, 3rem)",
                 fontWeight: 700,
                 marginBottom: 16,
                 color: "#0eaddf"
@@ -266,7 +266,7 @@ const Contact: React.FC = () => {
                   backdropFilter: "blur(20px)",
                   width: "100%"
                 }}
-                styles={{ body: { padding: 32 } }}
+                className="contact-form-card"
               >
                 <Title level={3} style={{ marginBottom: 24, color: "#e6edf3" }}>
                   Send Me a Message
