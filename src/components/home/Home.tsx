@@ -122,6 +122,8 @@ const Home: React.FC = () => {
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
+        pt: { xs: 10, md: 0 },
+        pb: { xs: 4, md: 0 },
         overflow: "hidden",
         background: "#0a0a0a"
       }}
@@ -295,14 +297,14 @@ const Home: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Scroll Down Indicator */}
+        {/* Scroll Down Indicator - desktop only */}
         <Box
           sx={{
+            display: { xs: "none", md: "flex" },
             position: "absolute",
             bottom: 40,
             left: "50%",
             transform: "translateX(-50%)",
-            display: "flex",
             flexDirection: "column",
             alignItems: "center",
             gap: 1,
