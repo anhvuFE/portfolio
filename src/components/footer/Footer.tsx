@@ -1,46 +1,26 @@
 import React from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  IconButton,
-  Link,
-  Divider,
-} from "@mui/material";
-import {
-  GitHub as GitHubIcon,
-  Facebook as FacebookIcon,
-  LinkedIn as LinkedInIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  LocationOn as LocationIcon,
-  ArrowUpward as ArrowUpIcon
-} from "@mui/icons-material";
+import { Box, Container, Typography, IconButton } from "@mui/material";
+import { ArrowUpward as ArrowUpIcon } from "@mui/icons-material";
 import MatrixRain from "../sakura/MatrixRain";
 import { keyframes } from "@emotion/react";
 
-interface QuickLink {
-  name: string;
-  href: string;
-}
-
-interface SocialLink {
-  name: string;
-  icon: React.ReactNode;
-  href: string;
-  color: string;
-}
-
-interface ContactInfo {
-  icon: React.ReactNode;
-  text: string;
-}
+const blink = keyframes`
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+`;
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 `;
+
+const MONO = '"Fira Code", "JetBrains Mono", Menlo, Monaco, Consolas, "Courier New", monospace';
+
+interface Line {
+  prompt?: string;
+  command?: string;
+  output?: React.ReactNode;
+}
 
 const Footer: React.FC = () => {
   const scrollToTop = (): void => {
@@ -49,55 +29,45 @@ const Footer: React.FC = () => {
 
   const currentYear: number = 2025;
 
-  const quickLinks: QuickLink[] = [
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Services", href: "#services" },
-    { name: "Portfolio", href: "#portfolio" },
-    { name: "Contact", href: "#contact" },
-    { name: "Certificates", href: "#certificates" }
-  ];
-
-  const socialLinks: SocialLink[] = [
+  const lines: Line[] = [
+    { command: "whoami" },
+    { output: <Box component="span" sx={{ color: "#e6edf3" }}>Vũ Xuân Anh — Full Stack Developer</Box> },
+    {},
+    { command: "cat /status" },
     {
-      name: "GitHub",
-      icon: <GitHubIcon />,
-      href: "https://github.com/anhvuFE",
-      color: "#333"
+      output: (
+        <Box component="span" sx={{ color: "#22c55e", display: "inline-flex", alignItems: "center", gap: 1 }}>
+          <Box
+            component="span"
+            sx={{
+              display: "inline-block",
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: "#22c55e",
+              boxShadow: "0 0 6px rgba(34, 197, 94, 0.8)"
+            }}
+          />
+          available for new opportunities
+        </Box>
+      )
     },
+    {},
+    { command: "ls ~/contact" },
     {
-      name: "Facebook",
-      icon: <FacebookIcon />,
-      href: "https://www.facebook.com/xuananhvu2312/",
-      color: "#1877F2"
+      output: (
+        <Box component="span">
+          <Box component="a" href="https://github.com/anhvuFE" target="_blank" rel="noopener noreferrer" sx={linkSx}>github.com/anhvuFE</Box>
+          {"  "}
+          <Box component="a" href="https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/" target="_blank" rel="noopener noreferrer" sx={linkSx}>linkedin.com/xu...</Box>
+          {"  "}
+          <Box component="a" href="mailto:vuxuananh22@gmail.com" sx={linkSx}>vuxuananh22@gmail.com</Box>
+        </Box>
+      )
     },
-    {
-      name: "LinkedIn",
-      icon: <LinkedInIcon />,
-      href: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/",
-      color: "#0A66C2"
-    },
-    {
-      name: "Email",
-      icon: <EmailIcon />,
-      href: "mailto:vuxuananh2312@gmail.com",
-      color: "#0eaddf"
-    }
-  ];
-
-  const contactInfo: ContactInfo[] = [
-    {
-      icon: <PhoneIcon />,
-      text: "+84 982 168 318"
-    },
-    {
-      icon: <EmailIcon />,
-      text: "vuxuananh2312@gmail.com"
-    },
-    {
-      icon: <LocationIcon />,
-      text: "Ha Noi, Vietnam"
-    }
+    {},
+    { command: "echo $LOCATION" },
+    { output: <Box component="span" sx={{ color: "#e6edf3" }}>Hanoi, Vietnam · GMT+7</Box> }
   ];
 
   return (
@@ -105,281 +75,168 @@ const Footer: React.FC = () => {
       component="footer"
       sx={{
         position: "relative",
-        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
-        pt: 8,
-        pb: 4,
-        overflow: "hidden"
+        background: "#0a0a0a",
+        borderTop: "1px solid rgba(14, 173, 223, 0.08)",
+        overflow: "hidden",
+        pt: { xs: 6, md: 8 },
+        pb: { xs: 4, md: 5 }
       }}
     >
       <MatrixRain />
 
-      {/* Scroll to Top Button */}
       <IconButton
         onClick={scrollToTop}
+        aria-label="Scroll to top"
         sx={{
           position: "fixed",
-          bottom: 80,
-          right: 30,
+          bottom: { xs: 20, md: 30 },
+          right: { xs: 20, md: 30 },
           background: "#0eaddf",
-          color: "white",
-          width: 56,
-          height: 56,
+          color: "#0a0a0a",
+          width: 48,
+          height: 48,
           boxShadow: "0 8px 24px rgba(14, 173, 223, 0.4)",
           animation: `${float} 3s ease-in-out infinite`,
           zIndex: 1000,
-          "&:hover": {
-            background: "#0c8db3",
-            transform: "scale(1.1)"
-          }
+          "&:hover": { background: "#3dc4ee", transform: "scale(1.08)" }
         }}
       >
         <ArrowUpIcon />
       </IconButton>
 
-      <Container maxWidth="lg">
-        {/* Main Footer Content */}
-        <Grid container spacing={4} sx={{ mb: 6 }}>
-          {/* Brand Section */}
-          <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { xs: "center", md: "left" } }}>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mb: 2,
-                color: "#0eaddf"
-              }}
-            >
-              Vũ Xuân Anh
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                color: "rgba(255, 255, 255, 0.9)",
-                mb: 2,
-                fontWeight: 500
-              }}
-            >
-              Full Stack Developer
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: 1.8,
-                mb: 3
-              }}
-            >
-              Passionate about creating innovative web solutions and delivering exceptional
-              user experiences. Specialized in modern web technologies and full-stack development.
-            </Typography>
-
-            {/* Social Links */}
-            <Box sx={{ display: "flex", gap: 1, justifyContent: { xs: "center", md: "flex-start" } }}>
-              {socialLinks.map((social: SocialLink) => (
-                <IconButton
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    background: "rgba(255, 255, 255, 0.1)",
-                    color: "rgba(255, 255, 255, 0.8)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    "&:hover": {
-                      background: social.color,
-                      color: "white",
-                      transform: "translateY(-4px)",
-                      boxShadow: `0 8px 16px ${social.color}40`
-                    }
-                  }}
-                >
-                  {social.icon}
-                </IconButton>
-              ))}
-            </Box>
-          </Grid>
-
-          {/* Quick Links */}
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ textAlign: { xs: "center", sm: "left" } }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                mb: 3,
-                color: "white",
-                position: "relative",
-                display: "inline-block",
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: -8,
-                  left: { xs: "50%", sm: 0 },
-                  transform: { xs: "translateX(-50%)", sm: "none" },
-                  width: 50,
-                  height: 3,
-                  background: "#0eaddf"
-                }
-              }}
-            >
-              Quick Links
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, alignItems: { xs: "center", sm: "flex-start" } }}>
-              {quickLinks.map((link: QuickLink) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  underline="none"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    fontSize: "0.95rem",
-                    position: "relative",
-                    transition: "all 0.3s ease",
-                    pl: 2,
-                    "&::before": {
-                      content: '"→"',
-                      position: "absolute",
-                      left: 0,
-                      opacity: 0,
-                      transform: "translateX(-10px)",
-                      transition: "all 0.3s ease"
-                    },
-                    "&:hover": {
-                      color: "#0eaddf",
-                      pl: 3,
-                      "&::before": {
-                        opacity: 1,
-                        transform: "translateX(0)"
-                      }
-                    }
-                  }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </Box>
-          </Grid>
-
-          {/* Contact Info */}
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ textAlign: { xs: "center", sm: "left" } }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                mb: 3,
-                color: "white",
-                position: "relative",
-                display: "inline-block",
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: -8,
-                  left: { xs: "50%", sm: 0 },
-                  transform: { xs: "translateX(-50%)", sm: "none" },
-                  width: 50,
-                  height: 3,
-                  background: "#0eaddf"
-                }
-              }}
-            >
-              Contact Info
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: { xs: "center", sm: "flex-start" } }}>
-              {contactInfo.map((info: ContactInfo, index: number) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                    color: "rgba(255, 255, 255, 0.7)"
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 2,
-                      background: "rgba(14, 173, 223, 0.15)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#0eaddf"
-                    }}
-                  >
-                    {info.icon}
-                  </Box>
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
-                    {info.text}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", mb: 4 }} />
-
-        {/* Copyright */}
+      <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
+        {/* Terminal window */}
         <Box
           sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 2
+            background: "#0d1117",
+            borderRadius: 2.5,
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(14, 173, 223, 0.05)",
+            overflow: "hidden",
+            fontFamily: MONO
           }}
         >
-          <Typography
-            variant="body2"
+          {/* Title bar */}
+          <Box
             sx={{
-              color: "rgba(255, 255, 255, 0.6)",
-              textAlign: { xs: "center", md: "left" }
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              px: 2,
+              py: 1.25,
+              background: "rgba(255, 255, 255, 0.02)",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.05)"
             }}
           >
-            © {currentYear} Vũ Xuân Anh. All rights reserved.
-          </Typography>
+            <Box sx={{ display: "flex", gap: 0.75 }}>
+              <Box sx={dotSx("#ff5f56")} />
+              <Box sx={dotSx("#ffbd2e")} />
+              <Box sx={dotSx("#27c93f")} />
+            </Box>
+            <Typography
+              sx={{
+                flex: 1,
+                textAlign: "center",
+                color: "#6e7681",
+                fontSize: "0.75rem",
+                fontFamily: MONO,
+                letterSpacing: 0.3,
+                userSelect: "none"
+              }}
+            >
+              vuxuananh@portfolio: ~
+            </Typography>
+            <Box sx={{ width: 52 }} />
+          </Box>
 
-          <Typography
-            variant="body2"
+          {/* Body */}
+          <Box
             sx={{
-              color: "rgba(255, 255, 255, 0.6)",
-              textAlign: { xs: "center", md: "right" }
+              p: { xs: 2, md: 3 },
+              fontSize: { xs: "0.8rem", md: "0.875rem" },
+              lineHeight: 1.7,
+              fontFamily: MONO,
+              color: "#8b949e",
+              overflowX: "auto"
             }}
           >
-            Built with ❤️ using React & Material-UI
-          </Typography>
+            {lines.map((line, i) => (
+              <Box key={i} sx={{ minHeight: "1.7em", whiteSpace: "nowrap" }}>
+                {line.command && (
+                  <>
+                    <Box component="span" sx={{ color: "#22c55e" }}>vu@portfolio</Box>
+                    <Box component="span" sx={{ color: "#6e7681" }}>:</Box>
+                    <Box component="span" sx={{ color: "#0eaddf" }}>~</Box>
+                    <Box component="span" sx={{ color: "#6e7681" }}>$ </Box>
+                    <Box component="span" sx={{ color: "#e6edf3" }}>{line.command}</Box>
+                  </>
+                )}
+                {line.output && <Box sx={{ pl: 0 }}>{line.output}</Box>}
+                {!line.command && !line.output && <>&nbsp;</>}
+              </Box>
+            ))}
+
+            {/* Active prompt with blinking cursor */}
+            <Box sx={{ minHeight: "1.7em", display: "flex", alignItems: "center" }}>
+              <Box component="span" sx={{ color: "#22c55e" }}>vu@portfolio</Box>
+              <Box component="span" sx={{ color: "#6e7681" }}>:</Box>
+              <Box component="span" sx={{ color: "#0eaddf" }}>~</Box>
+              <Box component="span" sx={{ color: "#6e7681" }}>$&nbsp;</Box>
+              <Box
+                component="span"
+                sx={{
+                  display: "inline-block",
+                  width: "0.55em",
+                  height: "1em",
+                  background: "#0eaddf",
+                  animation: `${blink} 1s step-end infinite`,
+                  verticalAlign: "text-bottom"
+                }}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Below-terminal credit */}
+        <Box
+          sx={{
+            mt: 3,
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            color: "#6e7681",
+            fontFamily: MONO,
+            fontSize: "0.7rem"
+          }}
+        >
+          <Box component="span">{`// © ${currentYear} Vũ Xuân Anh`}</Box>
+          <Box component="span">{"// built with React, TypeScript & MUI"}</Box>
         </Box>
       </Container>
-
-      {/* Background Decorations */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: -100,
-          right: -100,
-          width: 300,
-          height: 300,
-          borderRadius: "50%",
-          background: "#0eaddf",
-          opacity: 0.05,
-          filter: "blur(60px)"
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: -50,
-          left: -50,
-          width: 200,
-          height: 200,
-          borderRadius: "50%",
-          background: "#0eaddf",
-          opacity: 0.05,
-          filter: "blur(40px)"
-        }}
-      />
     </Box>
   );
+};
+
+const dotSx = (color: string) => ({
+  width: 12,
+  height: 12,
+  borderRadius: "50%",
+  background: color,
+  flexShrink: 0
+});
+
+const linkSx = {
+  color: "#0eaddf",
+  textDecoration: "underline",
+  textDecorationColor: "rgba(14, 173, 223, 0.3)",
+  textUnderlineOffset: 3,
+  transition: "all 0.2s ease",
+  "&:hover": {
+    color: "#3dc4ee",
+    textDecorationColor: "#3dc4ee"
+  }
 };
 
 export default Footer;
