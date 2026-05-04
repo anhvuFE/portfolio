@@ -4,13 +4,7 @@ import { ConfigProvider, theme as antdTheme } from "antd";
 import "./App.css";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
-import About from "./components/about/About";
-import GitHubActivity from "./components/github/GitHubActivity";
-import Skills from "./components/skills/Skills";
-import Services from "./components/services/Services";
-import Qualification from "./components/qualification/Qualification";
-import Certificate from "./components/certificate/Certificate";
-import Contact from "./components/contact/Contact";
+import BentoGrid from "./components/bento/BentoGrid";
 import Footer from "./components/footer/Footer";
 import CursorGlow from "./components/effects/CursorGlow";
 import ScrollReveal from "./components/effects/ScrollReveal";
@@ -152,26 +146,8 @@ function App(): React.ReactElement {
         <Header />
         <main className="main">
           <Home />
-          <ScrollReveal>
-            <About />
-          </ScrollReveal>
-          <ScrollReveal direction="up" delay={0.1}>
-            <GitHubActivity />
-          </ScrollReveal>
-          <ScrollReveal direction="up" delay={0.1}>
-            <Skills />
-          </ScrollReveal>
-          <ScrollReveal direction="left">
-            <Services />
-          </ScrollReveal>
           <ScrollReveal direction="up">
-            <Qualification />
-          </ScrollReveal>
-          <ScrollReveal direction="right">
-            <Certificate />
-          </ScrollReveal>
-          <ScrollReveal direction="up">
-            <Contact />
+            <BentoGrid />
           </ScrollReveal>
           <Footer />
         </main>
