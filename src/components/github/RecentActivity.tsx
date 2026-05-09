@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, Chip, CircularProgress } from "@mui/material";
+import React from "react";
+import { Box, Typography, Chip } from "@mui/material";
 import {
   Commit as CommitIcon,
   CallSplit as ForkIcon,
@@ -7,41 +7,27 @@ import {
   MergeType as PRIcon,
   BugReport as IssueIcon,
   Folder as RepoIcon,
-  GitHub as GitHubIcon
+  GitHub as GitHubIcon,
+  OpenInNew as OpenInNewIcon
 } from "@mui/icons-material";
+import data from "./recent-activity.json";
 
 const USERNAME = "anhvuFE";
-const CACHE_KEY = "gh-activity-v1";
-const CACHE_TTL_MS = 5 * 60 * 1000;
-const MAX_EVENTS = 5;
 
 interface ActivityEvent {
   type: "commit" | "pr" | "issue" | "star" | "fork" | "create";
   repo: string;
   message: string;
-  url: string;
+  url?: string;
   date: string;
 }
 
-interface ApiEvent {
-  id: string;
-  type: string;
-  created_at: string;
-  repo: { name: string };
-  payload: {
-    commits?: Array<{ message: string; sha: string }>;
-    action?: string;
-    pull_request?: { title: string; html_url: string; merged?: boolean };
-    issue?: { title: string; html_url: string };
-    ref_type?: string;
-    ref?: string;
-  };
+interface ActivityData {
+  fetchedAt: string;
+  events: ActivityEvent[];
 }
 
-function shorten(text: string, max = 60): string {
-  if (text.length <= max) return text;
-  return text.slice(0, max - 1).trimEnd() + "…";
-}
+const activity = data as ActivityData;
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -53,70 +39,6 @@ function relativeTime(iso: string): string {
   const d = Math.round(h / 24);
   if (d < 30) return `${d}d ago`;
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function mapEvent(e: ApiEvent): ActivityEvent | null {
-  const repoUrl = `https://github.com/${e.repo.name}`;
-  switch (e.type) {
-    case "PushEvent": {
-      const first = e.payload.commits?.[0];
-      if (!first) return null;
-      return {
-        type: "commit",
-        repo: e.repo.name,
-        message: shorten(first.message.split("\n")[0]),
-        url: `${repoUrl}/commit/${first.sha}`,
-        date: e.created_at
-      };
-    }
-    case "PullRequestEvent":
-      if (!e.payload.pull_request) return null;
-      return {
-        type: "pr",
-        repo: e.repo.name,
-        message: `${e.payload.action} PR: ${shorten(e.payload.pull_request.title)}`,
-        url: e.payload.pull_request.html_url,
-        date: e.created_at
-      };
-    case "IssuesEvent":
-      if (!e.payload.issue) return null;
-      return {
-        type: "issue",
-        repo: e.repo.name,
-        message: `${e.payload.action} issue: ${shorten(e.payload.issue.title)}`,
-        url: e.payload.issue.html_url,
-        date: e.created_at
-      };
-    case "WatchEvent":
-      return {
-        type: "star",
-        repo: e.repo.name,
-        message: `starred ${e.repo.name}`,
-        url: repoUrl,
-        date: e.created_at
-      };
-    case "ForkEvent":
-      return {
-        type: "fork",
-        repo: e.repo.name,
-        message: `forked ${e.repo.name}`,
-        url: repoUrl,
-        date: e.created_at
-      };
-    case "CreateEvent":
-      if (e.payload.ref_type === "repository" || e.payload.ref_type === "branch") {
-        return {
-          type: "create",
-          repo: e.repo.name,
-          message: `created ${e.payload.ref_type}${e.payload.ref ? ` ${e.payload.ref}` : ""}`,
-          url: repoUrl,
-          date: e.created_at
-        };
-      }
-      return null;
-    default:
-      return null;
-  }
 }
 
 const iconMap: Record<ActivityEvent["type"], React.ReactElement> = {
@@ -138,71 +60,10 @@ const colorMap: Record<ActivityEvent["type"], string> = {
 };
 
 const RecentActivity: React.FC = () => {
-  const [events, setEvents] = useState<ActivityEvent[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const ref = useRef<HTMLDivElement>(null);
-  const fetched = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      load();
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            io.disconnect();
-            load();
-            break;
-          }
-        }
-      },
-      { rootMargin: "200px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const load = async () => {
-    if (fetched.current) return;
-    fetched.current = true;
-
-    try {
-      const cached = sessionStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached) as { ts: number; data: ActivityEvent[] };
-        if (Date.now() - parsed.ts < CACHE_TTL_MS) {
-          setEvents(parsed.data);
-          return;
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-
-    try {
-      const res = await fetch(`https://api.github.com/users/${USERNAME}/events/public?per_page=30`);
-      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-      const json = (await res.json()) as ApiEvent[];
-      const mapped = json.map(mapEvent).filter((e): e is ActivityEvent => e !== null).slice(0, MAX_EVENTS);
-      setEvents(mapped);
-      try {
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: mapped }));
-      } catch {
-        /* quota exceeded */
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load activity");
-    }
-  };
+  const events = activity.events;
 
   return (
     <Box
-      ref={ref}
       sx={{
         background: "rgba(22, 22, 22, 0.6)",
         border: "1px solid rgba(255, 255, 255, 0.06)",
@@ -222,52 +83,45 @@ const RecentActivity: React.FC = () => {
             color: "#0eaddf"
           }}
         >
-          Live activity
+          Recent activity
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Box
+        <Typography
           sx={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: "#22c55e",
-            boxShadow: "0 0 8px rgba(34, 197, 94, 0.6)",
-            animation: "pulse-dot 2s ease-in-out infinite",
-            "@keyframes pulse-dot": {
-              "0%, 100%": { opacity: 1 },
-              "50%": { opacity: 0.4 }
-            }
+            fontSize: "0.65rem",
+            color: "#6e7681",
+            fontFamily: '"Fira Code", monospace'
           }}
-        />
+        >
+          updated {relativeTime(activity.fetchedAt)}
+        </Typography>
       </Box>
 
-      {events === null && !error && (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, py: 2 }}>
-          <CircularProgress size={14} sx={{ color: "#6e7681" }} />
-          <Typography sx={{ fontSize: "0.8rem", color: "#6e7681" }}>
-            Fetching from github.com…
-          </Typography>
+      {events.length === 0 ? (
+        <Box
+          component="a"
+          href={`https://github.com/${USERNAME}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 1,
+            color: "#0eaddf",
+            textDecoration: "none",
+            fontSize: "0.85rem",
+            "&:hover": { textDecoration: "underline" }
+          }}
+        >
+          View activity on github.com/{USERNAME}
+          <OpenInNewIcon sx={{ fontSize: 12 }} />
         </Box>
-      )}
-
-      {error && (
-        <Typography sx={{ fontSize: "0.8rem", color: "#6e7681" }}>
-          Couldn't load — see github.com/{USERNAME}
-        </Typography>
-      )}
-
-      {events && events.length === 0 && (
-        <Typography sx={{ fontSize: "0.8rem", color: "#6e7681" }}>
-          No public activity in the past few days.
-        </Typography>
-      )}
-
-      {events && events.length > 0 && (
+      ) : (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
           {events.map((e, i) => (
             <Box
               key={i}
-              component="a"
+              component={e.url ? "a" : "div"}
               href={e.url}
               target="_blank"
               rel="noopener noreferrer"
