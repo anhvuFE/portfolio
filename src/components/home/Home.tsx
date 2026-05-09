@@ -31,7 +31,7 @@ interface SocialLink {
 const roles = ["Full Stack Developer", "Frontend-leaning Engineer", "React & TypeScript"];
 
 const stats: StatItem[] = [
-  { value: "4+", label: "Years Experience" },
+  { value: "3+", label: "Years Experience" },
   { value: "4", label: "Companies" },
   { value: "10+", label: "Technologies" },
 ];

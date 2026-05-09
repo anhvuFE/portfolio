@@ -64,7 +64,7 @@ const achievements: Achievement[] = [
   },
   {
     icon: <LaptopOutlined style={{ fontSize: 32 }} />,
-    title: "4+ Years Experience",
+    title: "3+ Years Experience",
     description: "4 companies, full-time roles",
     color: "#0c8db3"
   },

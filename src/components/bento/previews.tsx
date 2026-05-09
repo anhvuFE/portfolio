@@ -24,7 +24,7 @@ export const AboutPreview: React.FC = () => (
         Full Stack Developer
       </Typography>
       <Typography sx={{ color: "#8b949e", fontSize: "0.8rem", lineHeight: 1.5 }}>
-        4+ years building modern web apps with React &amp; TypeScript
+        3+ years building modern web apps with React &amp; TypeScript
       </Typography>
     </Box>
   </Box>
