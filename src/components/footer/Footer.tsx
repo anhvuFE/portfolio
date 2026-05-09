@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const currentYear: number = 2025;
+  const currentYear: number = new Date().getFullYear();
 
   const lines: Line[] = [
     { command: "whoami" },

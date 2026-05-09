@@ -17,7 +17,7 @@ const stats: StatItem[] = [
   {
     icon: <AwardIcon sx={{ fontSize: 28 }} />,
     title: "Experience",
-    subtitle: "3+ Years Working",
+    subtitle: "4+ Years Working",
     color: "#0eaddf"
   },
   {

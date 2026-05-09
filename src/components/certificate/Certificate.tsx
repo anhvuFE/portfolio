@@ -415,7 +415,7 @@ const Certificate: React.FC = () => {
                       size="small" variant="outlined" sx={{ borderColor: "#0eaddf", color: "#0eaddf" }} />
                   </Box>
                 </Box>
-                <IconButton onClick={closeModal} sx={{ color: "#8b949e" }}><CloseIcon /></IconButton>
+                <IconButton onClick={closeModal} aria-label="Close certificate dialog" sx={{ color: "#8b949e" }}><CloseIcon /></IconButton>
               </DialogTitle>
               <DialogContent sx={{ p: 0 }}>
                 <Box sx={{

@@ -64,7 +64,7 @@ const achievements: Achievement[] = [
   },
   {
     icon: <LaptopOutlined style={{ fontSize: 32 }} />,
-    title: "3+ Years Experience",
+    title: "4+ Years Experience",
     description: "4 companies, full-time roles",
     color: "#0c8db3"
   },
@@ -150,9 +150,9 @@ const About: React.FC = () => {
                 lineHeight: 1.8
               }}
             >
-              I am a Developer with over two years of experience building modern, responsive, and user-focused web
-              applications. I work mainly with ReactJS and Angular, and have experience integrating systems using
-              Supabase and C#.
+              Three years in, four companies, mostly shipping React and TypeScript.
+              I started on the frontend — Angular, then React — and slowly moved closer
+              to the API side: Node, Supabase, a bit of C#.
             </Typography>
             <Typography
               variant="body1"
@@ -161,9 +161,9 @@ const About: React.FC = () => {
                 lineHeight: 1.8
               }}
             >
-              I am comfortable working with RESTful APIs, state management, and building clean, scalable interfaces.
-              I also have hands-on experience with database tools such as DBeaver. I enjoy working in Agile
-              environments and collaborating closely with designers and other developers to deliver high-quality products.
+              I care about the boring details that make products feel good — small bundles,
+              fast loads, accessible interactions, components that don't break when the
+              designer asks for "just one more variant".
             </Typography>
           </Grid>
 
