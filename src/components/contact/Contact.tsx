@@ -1,25 +1,37 @@
 import React, { useState, useCallback } from "react";
 import emailjs from "@emailjs/browser";
-import { Form, Input, Button, Card, Row, Col, Typography, message, Space, Divider, notification } from "antd";
 import {
-  MailOutlined,
-  PhoneOutlined,
-  SendOutlined,
-  UserOutlined,
-  ProjectOutlined,
-  LinkedinOutlined,
-  GithubOutlined,
-  FacebookOutlined,
-  CheckCircleOutlined,
-  EnvironmentOutlined,
-  ClockCircleOutlined,
-  ThunderboltOutlined
-} from "@ant-design/icons";
-import { Container, Box } from "@mui/material";
-import "./contact.css";
-
-const { Title, Text, Paragraph } = Typography;
-const { TextArea } = Input;
+  Box,
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  Snackbar,
+  Alert,
+  AlertTitle,
+  IconButton,
+  InputAdornment,
+  Stack,
+  CircularProgress
+} from "@mui/material";
+import {
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Send as SendIcon,
+  Person as PersonIcon,
+  Assignment as ProjectIcon,
+  LinkedIn as LinkedInIcon,
+  GitHub as GitHubIcon,
+  Facebook as FacebookIcon,
+  CheckCircle as CheckCircleIcon,
+  LocationOn as LocationIcon,
+  AccessTime as ClockIcon,
+  Bolt as BoltIcon
+} from "@mui/icons-material";
 
 interface ContactInfoItem {
   icon: React.ReactNode;
@@ -37,9 +49,23 @@ interface ContactFormValues {
   message: string;
 }
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
+interface ToastState {
+  open: boolean;
+  severity: "success" | "error";
+  title: string;
+  message: string;
+}
+
 const contactInfo: ContactInfoItem[] = [
   {
-    icon: <MailOutlined style={{ fontSize: 24 }} />,
+    icon: <EmailIcon sx={{ fontSize: 24 }} />,
     title: "Email",
     content: "vuxuananh22@gmail.com",
     link: "mailto:vuxuananh22@gmail.com",
@@ -47,7 +73,7 @@ const contactInfo: ContactInfoItem[] = [
     color: "#0eaddf"
   },
   {
-    icon: <PhoneOutlined style={{ fontSize: 24 }} />,
+    icon: <PhoneIcon sx={{ fontSize: 24 }} />,
     title: "Phone",
     content: "+84 982 168 318",
     link: "tel:+84982168318",
@@ -55,7 +81,7 @@ const contactInfo: ContactInfoItem[] = [
     color: "#0c8db3"
   },
   {
-    icon: <LinkedinOutlined style={{ fontSize: 24 }} />,
+    icon: <LinkedInIcon sx={{ fontSize: 24 }} />,
     title: "LinkedIn",
     content: "Vu Xuan Anh",
     link: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/",
@@ -63,7 +89,7 @@ const contactInfo: ContactInfoItem[] = [
     color: "#0077B5"
   },
   {
-    icon: <GithubOutlined style={{ fontSize: 24 }} />,
+    icon: <GitHubIcon sx={{ fontSize: 24 }} />,
     title: "GitHub",
     content: "anhvuFE",
     link: "https://github.com/anhvuFE",
@@ -72,68 +98,105 @@ const contactInfo: ContactInfoItem[] = [
   }
 ];
 
-const handleCardMouseEnter = (e: React.MouseEvent<HTMLDivElement>): void => {
-  e.currentTarget.style.transform = "translateY(-4px)";
-  e.currentTarget.style.boxShadow = "0 12px 24px rgba(14, 173, 223, 0.15)";
-  e.currentTarget.style.borderColor = "rgba(14, 173, 223, 0.3)";
-};
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MESSAGE_MAX = 500;
 
-const handleCardMouseLeave = (e: React.MouseEvent<HTMLDivElement>): void => {
-  e.currentTarget.style.transform = "translateY(0)";
-  e.currentTarget.style.boxShadow = "";
-  e.currentTarget.style.borderColor = "rgba(14, 173, 223, 0.15)";
-};
-
-const handleButtonMouseEnter = (e: React.MouseEvent<HTMLElement>): void => {
-  e.currentTarget.style.transform = "translateY(-2px)";
-  e.currentTarget.style.boxShadow = "0 8px 25px rgba(14, 173, 223, 0.4)";
-};
-
-const handleButtonMouseLeave = (e: React.MouseEvent<HTMLElement>): void => {
-  e.currentTarget.style.transform = "translateY(0)";
-  e.currentTarget.style.boxShadow = "0 4px 15px rgba(14, 173, 223, 0.3)";
-};
-
-const handleSocialMouseEnter = (e: React.MouseEvent<HTMLElement>): void => {
-  e.currentTarget.style.transform = "scale(1.2)";
-};
-
-const handleSocialMouseLeave = (e: React.MouseEvent<HTMLElement>): void => {
-  e.currentTarget.style.transform = "scale(1)";
+const inputSx = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+    background: "rgba(255,255,255,0.02)",
+    "& fieldset": { borderColor: "rgba(14, 173, 223, 0.2)" },
+    "&:hover fieldset": { borderColor: "rgba(14, 173, 223, 0.4)" },
+    "&.Mui-focused fieldset": { borderColor: "#0eaddf" }
+  },
+  "& .MuiInputBase-input": { color: "#e6edf3" },
+  "& .MuiInputBase-input::placeholder": { color: "#6e7681", opacity: 1 },
+  "& .MuiInputLabel-root": { color: "#8b949e" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "#0eaddf" }
 };
 
 const Contact: React.FC = () => {
-  const [form] = Form.useForm<ContactFormValues>();
+  const [values, setValues] = useState<ContactFormValues>({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [toast, setToast] = useState<ToastState>({
+    open: false,
+    severity: "success",
+    title: "",
+    message: ""
+  });
 
-  const sendEmail = useCallback((values: ContactFormValues): void => {
-    setIsSubmitting(true);
+  const handleChange = useCallback(
+    (field: keyof ContactFormValues) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const v = e.target.value;
+        setValues((prev) => ({ ...prev, [field]: v }));
+        setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+      },
+    []
+  );
 
-    const templateParams = {
-      name: values.name,
-      email: values.email,
-      project: values.message,
-      to_name: "Xuan Anh"
-    };
+  const validate = useCallback((v: ContactFormValues): FormErrors => {
+    const e: FormErrors = {};
+    if (!v.name.trim()) e.name = "Please enter your name";
+    if (!v.email.trim()) e.email = "Please enter your email";
+    else if (!EMAIL_REGEX.test(v.email.trim())) e.email = "Please enter a valid email";
+    if (!v.subject.trim()) e.subject = "Please enter a subject";
+    if (!v.message.trim()) e.message = "Please enter your message";
+    return e;
+  }, []);
 
-    emailjs
-      .send("service_u54tvkn", "template_kt9sbbg", templateParams, "y0KlrUodeWH1-Fg9W")
-      .then(() => {
-        notification.success({
-          message: "Message Sent Successfully!",
-          description: "Thank you for reaching out. I'll get back to you soon.",
-          icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
-          placement: "topRight"
-        });
-        form.resetFields();
-        setIsSubmitting(false);
-      })
-      .catch((error: Error) => {
-        console.error(error);
-        message.error("Failed to send message. Please try again.");
-        setIsSubmitting(false);
-      });
-  }, [form]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const fieldErrors = validate(values);
+      if (Object.keys(fieldErrors).length > 0) {
+        setErrors(fieldErrors);
+        return;
+      }
+
+      setIsSubmitting(true);
+      const templateParams = {
+        name: values.name,
+        email: values.email,
+        project: values.message,
+        to_name: "Xuan Anh"
+      };
+
+      emailjs
+        .send("service_u54tvkn", "template_kt9sbbg", templateParams, "y0KlrUodeWH1-Fg9W")
+        .then(() => {
+          setToast({
+            open: true,
+            severity: "success",
+            title: "Message Sent Successfully!",
+            message: "Thank you for reaching out. I'll get back to you soon."
+          });
+          setValues({ name: "", email: "", subject: "", message: "" });
+          setErrors({});
+        })
+        .catch((err: Error) => {
+          console.error(err);
+          setToast({
+            open: true,
+            severity: "error",
+            title: "Failed to send",
+            message: "Please try again or email me directly."
+          });
+        })
+        .finally(() => setIsSubmitting(false));
+    },
+    [values, validate]
+  );
+
+  const handleCloseToast = useCallback(() => {
+    setToast((prev) => ({ ...prev, open: false }));
+  }, []);
 
   return (
     <Box
@@ -146,288 +209,323 @@ const Contact: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
-          <Box sx={{ textAlign: "center", mb: 6 }}>
-            <Title
-              level={1}
-              style={{
-                fontSize: "clamp(2rem, 5vw + 1rem, 3rem)",
-                fontWeight: 700,
-                marginBottom: 16,
-                color: "#0eaddf"
-              }}
-            >
-              Let's Connect
-            </Title>
-            <Paragraph
-              style={{
-                fontSize: "1.125rem",
-                color: "#8b949e",
-                maxWidth: 600,
-                margin: "0 auto"
-              }}
-            >
-              Have a project in mind or just want to say hello? I'd love to hear from you!
-            </Paragraph>
-          </Box>
+        <Box sx={{ textAlign: "center", mb: 6 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: "clamp(2rem, 5vw + 1rem, 3rem)",
+              fontWeight: 700,
+              mb: 2,
+              color: "#0eaddf"
+            }}
+          >
+            Let's Connect
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "1.125rem",
+              color: "#8b949e",
+              maxWidth: 600,
+              mx: "auto"
+            }}
+          >
+            Have a project in mind or just want to say hello? I'd love to hear from you!
+          </Typography>
+        </Box>
 
-        <Row gutter={[32, 32]} align="stretch">
-          <Col xs={24} lg={10} style={{ display: "flex" }}>
-              <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                <Title level={3} style={{ marginBottom: 24, color: "#e6edf3" }}>
-                  Get In Touch
-                </Title>
+        <Grid container spacing={4} alignItems="stretch">
+          <Grid size={{ xs: 12, lg: 5 }} sx={{ display: "flex" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+              <Typography variant="h5" sx={{ mb: 3, color: "#e6edf3", fontWeight: 600 }}>
+                Get In Touch
+              </Typography>
 
-                <Space size="large" style={{ width: "100%", display: "flex", flexDirection: "column" }} direction="vertical">
-                  {contactInfo.map((info: ContactInfoItem, index: number) => (
-                      <Card
-                        key={index}
-                        hoverable
-                        style={{
-                          borderRadius: 12,
-                          border: "1px solid rgba(14, 173, 223, 0.15)",
-                          background: "rgba(22, 22, 22, 0.9)",
-                          backdropFilter: "blur(10px)",
-                          transition: "all 0.3s ease",
-                          width: "100%"
-                        }}
-                        styles={{ body: { padding: 20 } }}
-                        onMouseEnter={handleCardMouseEnter}
-                        onMouseLeave={handleCardMouseLeave}
-                      >
-                        <Space align="start" size="middle">
-                          <Box
+              <Stack spacing={2}>
+                {contactInfo.map((info, index) => (
+                  <Card
+                    key={index}
+                    sx={{
+                      borderRadius: 3,
+                      border: "1px solid rgba(14, 173, 223, 0.15)",
+                      background: "rgba(22, 22, 22, 0.9)",
+                      backdropFilter: "blur(10px)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "translateY(-4px)",
+                        boxShadow: "0 12px 24px rgba(14, 173, 223, 0.15)",
+                        borderColor: "rgba(14, 173, 223, 0.3)"
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ p: 2.5, "&:last-child": { pb: 2.5 } }}>
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: "50%",
+                            background: `${info.color}15`,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: info.color,
+                            flexShrink: 0
+                          }}
+                        >
+                          {info.icon}
+                        </Box>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography sx={{ fontWeight: 600, fontSize: "1rem", color: "#e6edf3", mb: 0.5 }}>
+                            {info.title}
+                          </Typography>
+                          <Typography sx={{ color: "#8b949e", mb: 1, fontSize: "0.9rem", wordBreak: "break-word" }}>
+                            {info.content}
+                          </Typography>
+                          <Button
+                            href={info.link}
+                            target={info.link.startsWith("http") ? "_blank" : undefined}
+                            rel={info.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                            startIcon={<SendIcon sx={{ fontSize: 16 }} />}
+                            size="small"
                             sx={{
-                              width: 48,
-                              height: 48,
-                              borderRadius: "50%",
-                              background: `${info.color}15`,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: info.color
+                              p: 0,
+                              minWidth: 0,
+                              color: info.color,
+                              fontWeight: 500,
+                              textTransform: "none",
+                              "&:hover": { background: "transparent", textDecoration: "underline" }
                             }}
                           >
-                            {info.icon}
-                          </Box>
-                          <div style={{ flex: 1 }}>
-                            <Text strong style={{ fontSize: "1rem", display: "block", marginBottom: 4, color: "#e6edf3" }}>
-                              {info.title}
-                            </Text>
-                            <Text style={{ color: "#8b949e", display: "block", marginBottom: 8 }}>
-                              {info.content}
-                            </Text>
-                            <Button
-                              type="link"
-                              href={info.link}
-                              target={info.link.startsWith("http") ? "_blank" : undefined}
-                              style={{ padding: 0, color: info.color, fontWeight: 500 }}
-                              icon={<SendOutlined />}
-                            >
-                              {info.action}
-                            </Button>
-                          </div>
-                        </Space>
-                      </Card>
-                  ))}
-                </Space>
+                            {info.action}
+                          </Button>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
 
-                <Divider style={{ margin: "32px 0", borderColor: "rgba(255, 255, 255, 0.08)" }} />
+              <Divider sx={{ my: 4, borderColor: "rgba(255, 255, 255, 0.08)" }} />
 
-                <Card
-                  style={{
-                    borderRadius: 12,
-                    background: "rgba(14, 173, 223, 0.05)",
-                    border: "1px solid rgba(14, 173, 223, 0.1)",
-                    flex: 1
-                  }}
-                  styles={{ body: { padding: 24, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" } }}
-                >
-                  <Space size="small" style={{ display: "flex", flexDirection: "column" }}>
-                    <EnvironmentOutlined style={{ fontSize: 20, color: "#0eaddf" }} />
-                    <Title level={5} style={{ margin: "8px 0", color: "#e6edf3" }}>Location</Title>
-                    <Text style={{ color: "#8b949e" }}>
-                      Hanoi, Vietnam
-                    </Text>
-                    <Text style={{ fontSize: "0.875rem", color: "#8b949e" }}>
-                      Available for remote work worldwide
-                    </Text>
-                  </Space>
-                </Card>
-              </div>
-          </Col>
-
-          <Col xs={24} lg={14} style={{ display: "flex" }}>
               <Card
-                style={{
-                  borderRadius: 16,
-                  boxShadow: "0 10px 40px rgba(14, 173, 223, 0.1)",
-                  border: "1px solid rgba(14, 173, 223, 0.15)",
-                  background: "rgba(22, 22, 22, 0.95)",
-                  backdropFilter: "blur(20px)",
-                  width: "100%"
+                sx={{
+                  borderRadius: 3,
+                  background: "rgba(14, 173, 223, 0.05)",
+                  border: "1px solid rgba(14, 173, 223, 0.1)",
+                  flex: 1
                 }}
-                className="contact-form-card"
               >
-                <Title level={3} style={{ marginBottom: 24, color: "#e6edf3" }}>
-                  Send Me a Message
-                </Title>
-
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={sendEmail}
-                  requiredMark={false}
+                <CardContent
+                  sx={{
+                    p: 3,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    "&:last-child": { pb: 3 }
+                  }}
                 >
-                  <Row gutter={16}>
-                    <Col xs={24} sm={12}>
-                      <Form.Item
-                        name="name"
-                        label={<Text strong style={{ color: "#e6edf3" }}>Your Name</Text>}
-                        rules={[{ required: true, message: "Please enter your name" }]}
-                      >
-                        <Input
-                          prefix={<UserOutlined />}
-                          placeholder="John Doe"
-                          size="large"
-                          style={{
-                            borderRadius: 8,
-                            borderColor: "rgba(14, 173, 223, 0.2)"
-                          }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Form.Item
-                        name="email"
-                        label={<Text strong style={{ color: "#e6edf3" }}>Your Email</Text>}
-                        rules={[
-                          { required: true, message: "Please enter your email" },
-                          { type: "email", message: "Please enter a valid email" }
-                        ]}
-                      >
-                        <Input
-                          prefix={<MailOutlined />}
-                          placeholder="john@example.com"
-                          size="large"
-                          style={{
-                            borderRadius: 8,
-                            borderColor: "rgba(14, 173, 223, 0.2)"
-                          }}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                  <LocationIcon sx={{ fontSize: 24, color: "#0eaddf", mb: 1 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: "#e6edf3", mb: 0.5 }}>
+                    Location
+                  </Typography>
+                  <Typography sx={{ color: "#8b949e" }}>Hanoi, Vietnam</Typography>
+                  <Typography sx={{ color: "#8b949e", fontSize: "0.875rem" }}>
+                    Available for remote work worldwide
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+          </Grid>
 
-                  <Form.Item
-                    name="subject"
-                    label={<Text strong style={{ color: "#e6edf3" }}>Subject</Text>}
-                    rules={[{ required: true, message: "Please enter a subject" }]}
+          <Grid size={{ xs: 12, lg: 7 }} sx={{ display: "flex" }}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: "0 10px 40px rgba(14, 173, 223, 0.1)",
+                border: "1px solid rgba(14, 173, 223, 0.15)",
+                background: "rgba(22, 22, 22, 0.95)",
+                backdropFilter: "blur(20px)",
+                width: "100%"
+              }}
+            >
+              <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                <Typography variant="h5" sx={{ mb: 3, color: "#e6edf3", fontWeight: 600 }}>
+                  Send Me a Message
+                </Typography>
+
+                <Box component="form" onSubmit={handleSubmit} noValidate>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        label="Your Name"
+                        placeholder="John Doe"
+                        value={values.name}
+                        onChange={handleChange("name")}
+                        error={Boolean(errors.name)}
+                        helperText={errors.name || " "}
+                        fullWidth
+                        size="medium"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <PersonIcon sx={{ color: "#6e7681", fontSize: 20 }} />
+                            </InputAdornment>
+                          )
+                        }}
+                        sx={inputSx}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        label="Your Email"
+                        placeholder="john@example.com"
+                        type="email"
+                        value={values.email}
+                        onChange={handleChange("email")}
+                        error={Boolean(errors.email)}
+                        helperText={errors.email || " "}
+                        fullWidth
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <EmailIcon sx={{ color: "#6e7681", fontSize: 20 }} />
+                            </InputAdornment>
+                          )
+                        }}
+                        sx={inputSx}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <TextField
+                    label="Subject"
+                    placeholder="Project inquiry, collaboration, or just saying hi!"
+                    value={values.subject}
+                    onChange={handleChange("subject")}
+                    error={Boolean(errors.subject)}
+                    helperText={errors.subject || " "}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <ProjectIcon sx={{ color: "#6e7681", fontSize: 20 }} />
+                        </InputAdornment>
+                      )
+                    }}
+                    sx={inputSx}
+                  />
+
+                  <TextField
+                    label="Your Message"
+                    placeholder="Tell me about your project or idea..."
+                    value={values.message}
+                    onChange={handleChange("message")}
+                    error={Boolean(errors.message)}
+                    helperText={
+                      <Box component="span" sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}>
+                        <Box component="span">{errors.message || " "}</Box>
+                        <Box component="span" sx={{ color: "#6e7681", flexShrink: 0 }}>
+                          {values.message.length} / {MESSAGE_MAX}
+                        </Box>
+                      </Box>
+                    }
+                    fullWidth
+                    multiline
+                    rows={6}
+                    inputProps={{ maxLength: MESSAGE_MAX }}
+                    sx={{ ...inputSx, mt: 1 }}
+                  />
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={isSubmitting}
+                    startIcon={
+                      isSubmitting ? (
+                        <CircularProgress size={18} sx={{ color: "rgba(10,10,10,0.6)" }} />
+                      ) : (
+                        <SendIcon />
+                      )
+                    }
+                    sx={{
+                      mt: 3,
+                      background: "#0eaddf",
+                      color: "#0a0a0a",
+                      borderRadius: 2,
+                      height: 48,
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      textTransform: "none",
+                      boxShadow: "0 4px 15px rgba(14, 173, 223, 0.3)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        background: "#0c8db3",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 8px 25px rgba(14, 173, 223, 0.4)"
+                      },
+                      "&.Mui-disabled": { background: "rgba(14, 173, 223, 0.5)", color: "rgba(10,10,10,0.7)" }
+                    }}
                   >
-                    <Input
-                      prefix={<ProjectOutlined />}
-                      placeholder="Project inquiry, collaboration, or just saying hi!"
-                      size="large"
-                      style={{
-                        borderRadius: 8,
-                        borderColor: "rgba(14, 173, 223, 0.2)"
-                      }}
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="message"
-                    label={<Text strong style={{ color: "#e6edf3" }}>Your Message</Text>}
-                    rules={[{ required: true, message: "Please enter your message" }]}
-                  >
-                    <TextArea
-                      placeholder="Tell me about your project or idea..."
-                      rows={6}
-                      style={{
-                        borderRadius: 8,
-                        borderColor: "rgba(14, 173, 223, 0.2)",
-                        resize: "none"
-                      }}
-                      maxLength={500}
-                      showCount
-                    />
-                  </Form.Item>
-
-                  <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      size="large"
-                      loading={isSubmitting}
-                      icon={<SendOutlined />}
-                      style={{
-                        background: "#0eaddf",
-                        color: "#0a0a0a",
-                        border: "none",
-                        borderRadius: 8,
-                        height: 48,
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        width: "100%",
-                        boxShadow: "0 4px 15px rgba(14, 173, 223, 0.3)",
-                        transition: "all 0.3s ease"
-                      }}
-                      onMouseEnter={handleButtonMouseEnter}
-                      onMouseLeave={handleButtonMouseLeave}
-                    >
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </Button>
-                  </Form.Item>
-                </Form>
-
-                <Divider style={{ margin: "24px 0", borderColor: "rgba(255, 255, 255, 0.08)" }} />
-
-                <Box sx={{ textAlign: "center" }}>
-                  <Text style={{ color: "#8b949e" }}>
-                    Or connect with me on social media
-                  </Text>
-                  <Space size="large" style={{ marginTop: 16 }}>
-                    <Button
-                      type="text"
-                      icon={<LinkedinOutlined style={{ fontSize: 20 }} />}
-                      href="https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/"
-                      target="_blank"
-                      style={{
-                        color: "#0077B5",
-                        transition: "transform 0.3s ease"
-                      }}
-                      onMouseEnter={handleSocialMouseEnter}
-                      onMouseLeave={handleSocialMouseLeave}
-                    />
-                    <Button
-                      type="text"
-                      icon={<GithubOutlined style={{ fontSize: 20 }} />}
-                      href="https://github.com/anhvuFE"
-                      target="_blank"
-                      style={{
-                        color: "#e6edf3",
-                        transition: "transform 0.3s ease"
-                      }}
-                      onMouseEnter={handleSocialMouseEnter}
-                      onMouseLeave={handleSocialMouseLeave}
-                    />
-                    <Button
-                      type="text"
-                      icon={<FacebookOutlined style={{ fontSize: 20 }} />}
-                      href="https://www.facebook.com/xuananhvu2312/"
-                      target="_blank"
-                      style={{
-                        color: "#1877F2",
-                        transition: "transform 0.3s ease"
-                      }}
-                      onMouseEnter={handleSocialMouseEnter}
-                      onMouseLeave={handleSocialMouseLeave}
-                    />
-                  </Space>
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                  </Button>
                 </Box>
 
-                <Divider style={{ margin: "24px 0", borderColor: "rgba(255, 255, 255, 0.08)" }} />
+                <Divider sx={{ my: 3, borderColor: "rgba(255, 255, 255, 0.08)" }} />
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography sx={{ color: "#8b949e", mb: 1 }}>
+                    Or connect with me on social media
+                  </Typography>
+                  <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 1 }}>
+                    <IconButton
+                      href="https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      sx={{
+                        color: "#0077B5",
+                        transition: "transform 0.3s ease",
+                        "&:hover": { transform: "scale(1.2)", background: "rgba(0, 119, 181, 0.08)" }
+                      }}
+                    >
+                      <LinkedInIcon />
+                    </IconButton>
+                    <IconButton
+                      href="https://github.com/anhvuFE"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub"
+                      sx={{
+                        color: "#e6edf3",
+                        transition: "transform 0.3s ease",
+                        "&:hover": { transform: "scale(1.2)", background: "rgba(255, 255, 255, 0.05)" }
+                      }}
+                    >
+                      <GitHubIcon />
+                    </IconButton>
+                    <IconButton
+                      href="https://www.facebook.com/xuananhvu2312/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      sx={{
+                        color: "#1877F2",
+                        transition: "transform 0.3s ease",
+                        "&:hover": { transform: "scale(1.2)", background: "rgba(24, 119, 242, 0.08)" }
+                      }}
+                    >
+                      <FacebookIcon />
+                    </IconButton>
+                  </Stack>
+                </Box>
+
+                <Divider sx={{ my: 3, borderColor: "rgba(255, 255, 255, 0.08)" }} />
+
+                <Stack spacing={1.5}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Box
                       sx={{
@@ -438,28 +536,46 @@ const Contact: React.FC = () => {
                         boxShadow: "0 0 8px rgba(34, 197, 94, 0.5)"
                       }}
                     />
-                    <Text style={{ color: "#8b949e", fontSize: "0.9rem" }}>
+                    <Typography sx={{ color: "#8b949e", fontSize: "0.9rem" }}>
                       Available for freelance & full-time opportunities
-                    </Text>
+                    </Typography>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <ClockCircleOutlined style={{ color: "#0eaddf", fontSize: 14 }} />
-                    <Text style={{ color: "#8b949e", fontSize: "0.9rem" }}>
+                    <ClockIcon sx={{ color: "#0eaddf", fontSize: 16 }} />
+                    <Typography sx={{ color: "#8b949e", fontSize: "0.9rem" }}>
                       Typical response time: within 24 hours
-                    </Text>
+                    </Typography>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <ThunderboltOutlined style={{ color: "#FFD700", fontSize: 14 }} />
-                    <Text style={{ color: "#8b949e", fontSize: "0.9rem" }}>
+                    <BoltIcon sx={{ color: "#FFD700", fontSize: 16 }} />
+                    <Typography sx={{ color: "#8b949e", fontSize: "0.9rem" }}>
                       Timezone: GMT+7 (Hanoi, Vietnam)
-                    </Text>
+                    </Typography>
                   </Box>
-                </Box>
-              </Card>
-          </Col>
-        </Row>
-
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Container>
+
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={5000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseToast}
+          severity={toast.severity}
+          variant="filled"
+          icon={toast.severity === "success" ? <CheckCircleIcon /> : undefined}
+          sx={{ minWidth: 320 }}
+        >
+          <AlertTitle sx={{ fontWeight: 700, mb: 0.5 }}>{toast.title}</AlertTitle>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

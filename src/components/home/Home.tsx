@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Container, Paper, IconButton, Typography, Button } from "@mui/material";
 import { GitHub, Facebook, LinkedIn, Email, ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
 import ConstellationBackground from "./ConstellationBackground";
-import NewAvatar from "../../assets/avatar.jpg";
+import NewAvatarWebp from "../../assets/avatar.webp";
+import NewAvatarJpg from "../../assets/avatar.jpg";
 import "./home.css";
 
 const float = keyframes`
@@ -42,27 +43,60 @@ const socialLinks: SocialLink[] = [
 ];
 
 const Home: React.FC = () => {
-  const [displayText, setDisplayText] = React.useState("");
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isActive, setIsActive] = useState(true);
 
   const handleRoleChange = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % roles.length);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const updateVisible = () => setIsActive(!document.hidden);
+
+    document.addEventListener("visibilitychange", updateVisible);
+
+    if (typeof IntersectionObserver !== "undefined") {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            setIsActive(e.isIntersecting && !document.hidden);
+          }
+        },
+        { threshold: 0 }
+      );
+      io.observe(el);
+      return () => {
+        document.removeEventListener("visibilitychange", updateVisible);
+        io.disconnect();
+      };
+    }
+    return () => document.removeEventListener("visibilitychange", updateVisible);
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
     const currentRole = roles[currentIndex];
     let index = 0;
+    let nextTimeout: ReturnType<typeof setTimeout> | null = null;
     const timer = setInterval(() => {
       setDisplayText(currentRole.slice(0, index));
       index++;
       if (index > currentRole.length) {
         clearInterval(timer);
-        setTimeout(handleRoleChange, 2000);
+        nextTimeout = setTimeout(handleRoleChange, 2000);
       }
     }, 100);
 
-    return () => clearInterval(timer);
-  }, [currentIndex, handleRoleChange]);
+    return () => {
+      clearInterval(timer);
+      if (nextTimeout) clearTimeout(nextTimeout);
+    };
+  }, [currentIndex, handleRoleChange, isActive]);
 
   const statsRendered = useMemo(
     () =>
@@ -117,6 +151,7 @@ const Home: React.FC = () => {
     <Box
       component="section"
       id="home"
+      ref={sectionRef}
       sx={{
         position: "relative",
         minHeight: "100vh",
@@ -161,20 +196,34 @@ const Home: React.FC = () => {
               }}
             >
               <Box
-                component="img"
-                src={NewAvatar}
-                alt="Vũ Xuân Anh"
+                component="picture"
                 sx={{
+                  display: "block",
                   width: { xs: 280, sm: 320, md: 360 },
-                  height: { xs: 280, sm: 320, md: 360 },
-                  borderRadius: "20px",
-                  border: "4px solid rgba(255, 255, 255, 0.1)",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                  objectFit: "cover",
-                  objectPosition: "center 20%",
-                  display: "block"
+                  height: { xs: 280, sm: 320, md: 360 }
                 }}
-              />
+              >
+                <source type="image/webp" srcSet={NewAvatarWebp} />
+                <Box
+                  component="img"
+                  src={NewAvatarJpg}
+                  alt="Vũ Xuân Anh"
+                  width={360}
+                  height={360}
+                  fetchPriority="high"
+                  decoding="async"
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "20px",
+                    border: "4px solid rgba(255, 255, 255, 0.1)",
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+                    objectFit: "cover",
+                    objectPosition: "center 20%",
+                    display: "block"
+                  }}
+                />
+              </Box>
             </Paper>
 
             {/* Social Links */}

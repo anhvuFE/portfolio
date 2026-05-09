@@ -242,6 +242,8 @@ const Skills: React.FC = () => {
                           component="img"
                           src={skill.icon}
                           alt={skill.name}
+                          loading="lazy"
+                          decoding="async"
                           sx={{
                             width: "70%",
                             height: "70%",
