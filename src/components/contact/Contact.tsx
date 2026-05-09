@@ -164,12 +164,29 @@ const Contact: React.FC = () => {
       const templateParams = {
         name: values.name,
         email: values.email,
+        subject: values.subject,
         project: values.message,
         to_name: "Xuan Anh"
       };
 
+      const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+      const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        console.error("EmailJS env vars missing");
+        setToast({
+          open: true,
+          severity: "error",
+          title: "Configuration error",
+          message: "Email service is not configured. Please email me directly."
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       emailjs
-        .send("service_u54tvkn", "template_kt9sbbg", templateParams, "y0KlrUodeWH1-Fg9W")
+        .send(serviceId, templateId, templateParams, publicKey)
         .then(() => {
           setToast({
             open: true,
@@ -229,7 +246,7 @@ const Contact: React.FC = () => {
               mx: "auto"
             }}
           >
-            Have a project in mind or just want to say hello? I'd love to hear from you!
+            Hiring, freelance, or just curious about something I built — drop a message.
           </Typography>
         </Box>
 

@@ -28,10 +28,10 @@ interface SocialLink {
   label: string;
 }
 
-const roles = ["Full Stack Developer", "Software Engineer", "React & TypeScript Expert"];
+const roles = ["Full Stack Developer", "Frontend-leaning Engineer", "React & TypeScript"];
 
 const stats: StatItem[] = [
-  { value: "3+", label: "Years Experience" },
+  { value: "4+", label: "Years Experience" },
   { value: "4", label: "Companies" },
   { value: "10+", label: "Technologies" },
 ];
@@ -281,9 +281,8 @@ const Home: React.FC = () => {
                 maxWidth: 600
               }}
             >
-              Full Stack Developer with 3+ years of experience building modern, responsive web applications.
-              Passionate about clean code, intuitive design, and delivering high-quality products
-              in Agile environments.
+              I build fast, accessible web apps with React, TypeScript and Node.
+              Currently shipping at neliSoftwares — open to freelance and full-time roles.
             </Typography>
 
             {/* Stats */}

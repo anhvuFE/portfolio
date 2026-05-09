@@ -299,7 +299,7 @@ const Services: React.FC = () => {
                   {service.description}
                 </Typography>
               </Box>
-              <IconButton onClick={closeModal} sx={{ color: "#8b949e" }}>
+              <IconButton onClick={closeModal} aria-label="Close service details" sx={{ color: "#8b949e" }}>
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
