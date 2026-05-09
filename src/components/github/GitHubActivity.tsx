@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Container, Typography, Paper, useTheme, useMediaQuery } from "@mui/material";
 import { GitHubCalendar } from "react-github-calendar";
+import RecentActivity from "./RecentActivity";
 
 const GitHubActivity: React.FC = () => {
   const theme = useTheme();
@@ -87,6 +88,10 @@ const GitHubActivity: React.FC = () => {
               background: "linear-gradient(to right, rgba(13,17,23,0) 0%, rgba(13,17,23,0.95) 100%)"
             }}
           />
+        </Box>
+
+        <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+          <RecentActivity />
         </Box>
       </Container>
     </Box>
