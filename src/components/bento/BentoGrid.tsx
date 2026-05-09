@@ -8,7 +8,8 @@ import {
   ExperiencePreview,
   CertsPreview,
   ServicesPreview,
-  ContactPreview
+  ContactPreview,
+  ProjectsPreview
 } from "./previews";
 import GitHubPreview from "./GitHubPreview";
 
@@ -19,6 +20,7 @@ const Services = lazy(() => import("../services/Services"));
 const Qualification = lazy(() => import("../qualification/Qualification"));
 const Certificate = lazy(() => import("../certificate/Certificate"));
 const Contact = lazy(() => import("../contact/Contact"));
+const Projects = lazy(() => import("../projects/Projects"));
 
 type SectionKey =
   | "about"
@@ -27,7 +29,8 @@ type SectionKey =
   | "experience"
   | "certificates"
   | "services"
-  | "contact";
+  | "contact"
+  | "projects";
 
 const sectionContent: Record<SectionKey, React.LazyExoticComponent<React.FC>> = {
   about: About,
@@ -36,7 +39,8 @@ const sectionContent: Record<SectionKey, React.LazyExoticComponent<React.FC>> = 
   experience: Qualification,
   certificates: Certificate,
   services: Services,
-  contact: Contact
+  contact: Contact,
+  projects: Projects
 };
 
 const DrawerLoader: React.FC = () => (
@@ -52,7 +56,8 @@ const validKeys = new Set<SectionKey>([
   "experience",
   "certificates",
   "services",
-  "contact"
+  "contact",
+  "projects"
 ]);
 
 const BentoGrid: React.FC = () => {
@@ -97,7 +102,8 @@ const BentoGrid: React.FC = () => {
       experience: () => open("experience"),
       certificates: () => open("certificates"),
       services: () => open("services"),
-      contact: () => open("contact")
+      contact: () => open("contact"),
+      projects: () => open("projects")
     }),
     [open]
   );
@@ -184,6 +190,14 @@ const BentoGrid: React.FC = () => {
             preview={<ServicesPreview />}
             onClick={handlers.services}
             gridColumn={{ md: "5 / span 2" }}
+          />
+          <BentoCard
+            title="Projects"
+            subtitle="Case Studies"
+            accent="#a855f7"
+            preview={<ProjectsPreview />}
+            onClick={handlers.projects}
+            gridColumn={{ xs: "1 / -1", md: "1 / -1" }}
           />
           <BentoCard
             title="Let's Connect"
