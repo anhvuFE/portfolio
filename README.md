@@ -56,6 +56,17 @@ npm run deploy        # gh-pages -d build (uses homepage in package.json)
 GitHub Pages is configured via `homepage` in `package.json`. The `deploy`
 script publishes the `build/` folder to the `gh-pages` branch.
 
+### Prebuild hook
+
+`npm run build` runs `scripts/fetch-github-activity.js` first. The script
+calls the public GitHub events API for the user, maps the response into
+the shape the UI expects, and writes
+`src/components/github/recent-activity.json`. If the request fails (rate
+limit, network), the existing JSON is kept so the build never breaks.
+
+Set `GITHUB_TOKEN` (or `GH_TOKEN`) in your environment to authenticate
+the request and avoid the unauthenticated 60-req/hr limit.
+
 ## Image pipeline
 
 `scripts/optimize-images.js` regenerates JPG + WebP variants from the source
@@ -67,6 +78,9 @@ node scripts/optimize-images.js
 
 `scripts/generate-favicon.js` regenerates the favicon set in `public/` from
 `src/assets/avatar.jpg`.
+
+`scripts/fetch-github-activity.js` runs as a prebuild hook (see above). You
+can run it on demand to refresh local data without doing a full build.
 
 ## Project structure
 

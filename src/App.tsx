@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import "./App.css";
 import Header from "./components/header/Header";
@@ -7,6 +7,8 @@ import BentoGrid from "./components/bento/BentoGrid";
 import Footer from "./components/footer/Footer";
 import CursorGlow from "./components/effects/CursorGlow";
 import ScrollReveal from "./components/effects/ScrollReveal";
+
+const CommandPalette = lazy(() => import("./components/palette/CommandPalette"));
 
 const theme = createTheme({
   palette: {
@@ -98,11 +100,26 @@ const theme = createTheme({
 });
 
 function App(): React.ReactElement {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  const closePalette = useCallback(() => setPaletteOpen(false), []);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <CursorGlow />
-      <Header />
+      <Header onOpenPalette={() => setPaletteOpen(true)} />
       <main className="main">
         <Home />
         <ScrollReveal direction="up">
@@ -110,6 +127,11 @@ function App(): React.ReactElement {
         </ScrollReveal>
         <Footer />
       </main>
+      {paletteOpen && (
+        <Suspense fallback={null}>
+          <CommandPalette open={paletteOpen} onClose={closePalette} />
+        </Suspense>
+      )}
     </ThemeProvider>
   );
 }

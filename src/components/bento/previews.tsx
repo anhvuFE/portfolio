@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Avatar, Chip } from "@mui/material";
-import { Email, Code, Cloud, Api } from "@mui/icons-material";
+import { Email, Code, Cloud, Api, FolderSpecial } from "@mui/icons-material";
 import AvatarImg from "../../assets/avatar.webp";
 import awsCert from "../../assets/CERTIFICATE_LANDING_PAGE~HN06MIP031ZR.webp";
 
@@ -132,6 +132,23 @@ export const ContactPreview: React.FC = () => (
     />
     <Typography sx={{ color: "#8b949e", fontSize: "0.85rem", lineHeight: 1.5 }}>
       Open to freelance & full-time opportunities. Response within 24h.
+    </Typography>
+  </Box>
+);
+
+export const ProjectsPreview: React.FC = () => (
+  <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: "auto" }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#a855f7" }}>
+      <FolderSpecial sx={{ fontSize: 16 }} />
+      <Typography sx={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: 1, textTransform: "uppercase" }}>
+        3 case studies
+      </Typography>
+    </Box>
+    <Typography sx={{ color: "#e6edf3", fontWeight: 600, fontSize: "0.95rem", lineHeight: 1.4 }}>
+      Shopify app · Marketing rebuild · Ops dashboard
+    </Typography>
+    <Typography sx={{ color: "#8b949e", fontSize: "0.78rem", lineHeight: 1.5 }}>
+      Problem → Approach → Result for each
     </Typography>
   </Box>
 );
