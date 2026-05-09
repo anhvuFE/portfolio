@@ -1,16 +1,16 @@
-import React, { useState, lazy, Suspense, useCallback, useEffect } from "react";
+import React, { useState, lazy, Suspense, useCallback, useEffect, useMemo } from "react";
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import BentoCard from "./BentoCard";
 import SectionDrawer from "./SectionDrawer";
 import {
   AboutPreview,
   SkillsPreview,
-  GitHubPreview,
   ExperiencePreview,
   CertsPreview,
   ServicesPreview,
   ContactPreview
 } from "./previews";
+import GitHubPreview from "./GitHubPreview";
 
 const About = lazy(() => import("../about/About"));
 const GitHubActivity = lazy(() => import("../github/GitHubActivity"));
@@ -89,6 +89,19 @@ const BentoGrid: React.FC = () => {
 
   const ActiveSection = openSection ? sectionContent[openSection] : null;
 
+  const handlers = useMemo(
+    () => ({
+      about: () => open("about"),
+      github: () => open("github"),
+      skills: () => open("skills"),
+      experience: () => open("experience"),
+      certificates: () => open("certificates"),
+      services: () => open("services"),
+      contact: () => open("contact")
+    }),
+    [open]
+  );
+
   return (
     <Box
       component="section"
@@ -129,7 +142,7 @@ const BentoGrid: React.FC = () => {
             title="About Me"
             subtitle="Profile"
             preview={<AboutPreview />}
-            onClick={() => open("about")}
+            onClick={handlers.about}
             gridColumn={{ xs: "1 / -1", md: "1 / span 4" }}
           />
           <BentoCard
@@ -137,7 +150,7 @@ const BentoGrid: React.FC = () => {
             subtitle="Skills"
             accent="#a855f7"
             preview={<SkillsPreview />}
-            onClick={() => open("skills")}
+            onClick={handlers.skills}
             gridColumn={{ md: "5 / span 2" }}
             gridRow={{ md: "span 2" }}
           />
@@ -145,7 +158,7 @@ const BentoGrid: React.FC = () => {
             title="GitHub Activity"
             subtitle="Open Source"
             preview={<GitHubPreview />}
-            onClick={() => open("github")}
+            onClick={handlers.github}
             gridColumn={{ md: "1 / span 4" }}
           />
           <BentoCard
@@ -153,7 +166,7 @@ const BentoGrid: React.FC = () => {
             subtitle="Career"
             accent="#22c55e"
             preview={<ExperiencePreview />}
-            onClick={() => open("experience")}
+            onClick={handlers.experience}
             gridColumn={{ md: "1 / span 2" }}
           />
           <BentoCard
@@ -161,7 +174,7 @@ const BentoGrid: React.FC = () => {
             subtitle="Achievements"
             accent="#FFD700"
             preview={<CertsPreview />}
-            onClick={() => open("certificates")}
+            onClick={handlers.certificates}
             gridColumn={{ md: "3 / span 2" }}
           />
           <BentoCard
@@ -169,14 +182,14 @@ const BentoGrid: React.FC = () => {
             subtitle="What I do"
             accent="#f5576c"
             preview={<ServicesPreview />}
-            onClick={() => open("services")}
+            onClick={handlers.services}
             gridColumn={{ md: "5 / span 2" }}
           />
           <BentoCard
             title="Let's Connect"
             subtitle="Get in touch"
             preview={<ContactPreview />}
-            onClick={() => open("contact")}
+            onClick={handlers.contact}
             gridColumn={{ xs: "1 / -1", md: "1 / -1" }}
           />
         </Box>

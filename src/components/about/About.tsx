@@ -10,13 +10,13 @@ import {
   Avatar
 } from "@mui/material";
 import {
-  DownloadOutlined,
-  MessageOutlined,
-  TrophyOutlined,
-  BookOutlined,
-  LaptopOutlined
-} from "@ant-design/icons";
-import AboutImg from "../../assets/avatar.jpg";
+  Download as DownloadOutlined,
+  Message as MessageOutlined,
+  EmojiEvents as TrophyOutlined,
+  MenuBook as BookOutlined,
+  Laptop as LaptopOutlined
+} from "@mui/icons-material";
+import AboutImg from "../../assets/avatar.webp";
 import CV from "../../assets/CV-VuXuanAnh.pdf";
 import Info from "./Info";
 
@@ -274,6 +274,8 @@ const About: React.FC = () => {
                           <img
                             src={tech.icon}
                             alt={tech.name}
+                            loading="lazy"
+                            decoding="async"
                             style={{
                               width: 16,
                               height: 16,

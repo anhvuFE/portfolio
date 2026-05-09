@@ -55,6 +55,9 @@ const FloatingParticles: React.FC = () => {
 
     handleResize();
 
+    let isVisible = !document.hidden;
+    let isInViewport = true;
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -109,12 +112,46 @@ const FloatingParticles: React.FC = () => {
       animationIdRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    const start = () => {
+      if (animationIdRef.current !== null) return;
+      animationIdRef.current = requestAnimationFrame(animate);
+    };
 
-    return () => {
+    const stop = () => {
       if (animationIdRef.current !== null) {
         cancelAnimationFrame(animationIdRef.current);
+        animationIdRef.current = null;
       }
+    };
+
+    const sync = () => {
+      if (isVisible && isInViewport) start();
+      else stop();
+    };
+
+    const handleVisibility = () => {
+      isVisible = !document.hidden;
+      sync();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          isInViewport = e.isIntersecting;
+        }
+        sync();
+      },
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+
+    start();
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      io.disconnect();
+      stop();
     };
   }, [handleResize]);
 

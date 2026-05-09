@@ -5,20 +5,22 @@ import {
   Typography,
   IconButton,
   Drawer,
-  List,
-  ListItem,
-  ListItemText,
   useScrollTrigger,
   Box,
   useTheme,
   useMediaQuery,
-  Container
+  Container,
+  Divider,
+  Stack
 } from "@mui/material";
 import {
   Menu as MenuIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  GitHub as GitHubIcon,
+  LinkedIn as LinkedInIcon,
+  Facebook as FacebookIcon,
+  MailOutline as MailIcon
 } from "@mui/icons-material";
-import "./header.css";
 
 interface NavItem {
   id: string;
@@ -115,7 +117,7 @@ const Header: React.FC = () => {
                 }
               }}
             >
-              Xuan<span>Anh</span>
+              Xuan <span>Anh</span>
             </Typography>
 
             {!isMobile ? (
@@ -189,66 +191,156 @@ const Header: React.FC = () => {
         onClose={() => setIsMenuOpen(false)}
         PaperProps={{
           sx: {
-            width: 260,
-            background: "#111111",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.05)"
+            width: { xs: "min(320px, 88vw)", sm: 340 },
+            background: "#0a0a0a",
+            border: "none",
+            display: "flex",
+            flexDirection: "column"
           }
         }}
       >
         <Box
           sx={{
-            p: 2,
             display: "flex",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
+            px: 2.5,
+            pt: 2.5,
+            pb: 1
           }}
         >
           <IconButton
             onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
             sx={{
               color: "#6e7681",
-              width: 36,
-              height: 36,
-              "&:hover": { color: "#e6edf3" }
+              width: 40,
+              height: 40,
+              "&:hover": { color: "#0eaddf", background: "rgba(14, 173, 223, 0.06)" }
             }}
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </Box>
 
-        <List sx={{ px: 2 }}>
-          {navItems.map((item) => (
-            <ListItem
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
+        <Box component="nav" sx={{ px: 4, pt: 3, flex: 1 }}>
+          {navItems.map((item, index) => {
+            const isActive = activeSection === item.id;
+            return (
+              <Box
+                key={item.id}
+                component="a"
+                href={`#${item.id}`}
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleNavClick(item.id);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  py: 1.75,
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  transition: "color 0.25s ease",
+                  color: isActive ? "#0eaddf" : "#e6edf3",
+                  "&:hover": { color: "#0eaddf" },
+                  "&:hover .nav-num": { color: "#0eaddf" }
+                }}
+              >
+                <Typography
+                  className="nav-num"
+                  sx={{
+                    fontFamily: '"Fira Code", "JetBrains Mono", Menlo, monospace',
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    color: isActive ? "#0eaddf" : "#4a5560",
+                    minWidth: 32,
+                    transition: "color 0.25s ease"
+                  }}
+                >
+                  {String(index + 1).padStart(2, "0")}.
+                </Typography>
+                <Typography
+                  sx={{
+                    flex: 1,
+                    fontSize: "1.15rem",
+                    fontWeight: isActive ? 600 : 500,
+                    letterSpacing: "-0.01em"
+                  }}
+                >
+                  {item.label}
+                </Typography>
+                {isActive && (
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      background: "#0eaddf",
+                      boxShadow: "0 0 8px rgba(14, 173, 223, 0.6)"
+                    }}
+                  />
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+
+        <Box sx={{ px: 4, pb: 4, pt: 2 }}>
+          <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.06)", mb: 3 }} />
+          <Stack spacing={0.75} sx={{ mb: 3 }}>
+            <Box
+              component="a"
+              href="mailto:vuxuananh22@gmail.com"
               sx={{
-                borderRadius: 1.5,
-                mb: 0.5,
-                cursor: "pointer",
-                py: 1.5,
-                transition: "all 0.2s ease",
-                borderLeft: activeSection === item.id
-                  ? "2px solid #0eaddf"
-                  : "2px solid transparent",
-                background: activeSection === item.id
-                  ? "rgba(14, 173, 223, 0.05)"
-                  : "transparent",
-                "&:hover": {
-                  background: "rgba(255, 255, 255, 0.03)",
-                }
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "#8b949e",
+                textDecoration: "none",
+                fontSize: "0.85rem",
+                transition: "color 0.2s ease",
+                "&:hover": { color: "#0eaddf" }
               }}
             >
-              <ListItemText
-                primary={item.label}
-                primaryTypographyProps={{
-                  fontSize: "0.9rem",
-                  fontWeight: activeSection === item.id ? 600 : 400,
-                  color: activeSection === item.id ? "#0eaddf" : "#8b949e",
-                  letterSpacing: "0.02em"
+              <MailIcon sx={{ fontSize: 14 }} />
+              vuxuananh22@gmail.com
+            </Box>
+            <Typography sx={{ color: "#6e7681", fontSize: "0.8rem", pl: "22px" }}>
+              Hanoi, Vietnam · GMT+7
+            </Typography>
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            {[
+              { icon: <GitHubIcon sx={{ fontSize: 18 }} />, href: "https://github.com/anhvuFE", label: "GitHub" },
+              { icon: <LinkedInIcon sx={{ fontSize: 18 }} />, href: "https://www.linkedin.com/in/xu%C3%A2n-anh-v%C5%A9-515580367/", label: "LinkedIn" },
+              { icon: <FacebookIcon sx={{ fontSize: 18 }} />, href: "https://www.facebook.com/xuananhvu2312/", label: "Facebook" }
+            ].map((s) => (
+              <IconButton
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                size="small"
+                sx={{
+                  width: 36,
+                  height: 36,
+                  color: "#8b949e",
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    color: "#0eaddf",
+                    borderColor: "rgba(14, 173, 223, 0.3)",
+                    background: "rgba(14, 173, 223, 0.04)"
+                  }
                 }}
-              />
-            </ListItem>
-          ))}
-        </List>
+              >
+                {s.icon}
+              </IconButton>
+            ))}
+          </Stack>
+        </Box>
       </Drawer>
     </>
   );

@@ -1,9 +1,8 @@
 import React from "react";
 import { Box, Typography, Avatar, Chip } from "@mui/material";
-import { GitHub, Email, Code, Cloud, Api } from "@mui/icons-material";
-import { GitHubCalendar } from "react-github-calendar";
-import AvatarImg from "../../assets/avatar.jpg";
-import awsCert from "../../assets/CERTIFICATE_LANDING_PAGE~HN06MIP031ZR.jpeg";
+import { Email, Code, Cloud, Api } from "@mui/icons-material";
+import AvatarImg from "../../assets/avatar.webp";
+import awsCert from "../../assets/CERTIFICATE_LANDING_PAGE~HN06MIP031ZR.webp";
 
 const techIcons = [
   { name: "React", src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
@@ -47,46 +46,9 @@ export const SkillsPreview: React.FC = () => (
           p: 1.25
         }}
       >
-        <Box component="img" src={t.src} alt={t.name} sx={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <Box component="img" src={t.src} alt={t.name} loading="lazy" decoding="async" sx={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </Box>
     ))}
-  </Box>
-);
-
-export const GitHubPreview: React.FC = () => (
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "flex-end",
-      height: "100%",
-      gap: 1,
-      overflow: "hidden",
-      "& .react-activity-calendar": { width: "100% !important" },
-      "& .react-activity-calendar__scroll-container": { overflow: "hidden" },
-      "& article > div": { gap: "3px !important" }
-    }}
-  >
-    <Box sx={{ pointerEvents: "none" }}>
-      <GitHubCalendar
-        username="anhvuFE"
-        colorScheme="dark"
-        blockSize={10}
-        blockMargin={3}
-        blockRadius={2}
-        fontSize={0}
-        showColorLegend={false}
-        showMonthLabels={false}
-        showTotalCount={false}
-        showWeekdayLabels={false}
-        labels={{ totalCount: "" }}
-        style={{ color: "transparent" }}
-      />
-    </Box>
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#8b949e" }}>
-      <GitHub sx={{ fontSize: 14 }} />
-      <Typography sx={{ fontSize: "0.75rem" }}>@anhvuFE — live contributions</Typography>
-    </Box>
   </Box>
 );
 
@@ -118,6 +80,8 @@ export const CertsPreview: React.FC = () => (
       component="img"
       src={awsCert}
       alt="Featured certificate"
+      loading="lazy"
+      decoding="async"
       sx={{
         width: 64,
         height: 48,

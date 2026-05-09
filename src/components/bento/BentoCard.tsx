@@ -12,7 +12,7 @@ export interface BentoCardProps {
   gridRow?: string | { xs?: string; md?: string };
 }
 
-const BentoCard: React.FC<BentoCardProps> = ({
+const BentoCard: React.FC<BentoCardProps> = React.memo(({
   title,
   subtitle,
   accent = "#0eaddf",
@@ -126,6 +126,8 @@ const BentoCard: React.FC<BentoCardProps> = ({
       </Box>
     </Box>
   );
-};
+});
+
+BentoCard.displayName = "BentoCard";
 
 export default BentoCard;

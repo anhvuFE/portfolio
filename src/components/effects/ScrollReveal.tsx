@@ -1,5 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -8,11 +7,11 @@ interface ScrollRevealProps {
   duration?: number;
 }
 
-const directionOffset = {
-  up: { y: 40, x: 0 },
-  down: { y: -40, x: 0 },
-  left: { x: 40, y: 0 },
-  right: { x: -40, y: 0 }
+const directionOffset: Record<NonNullable<ScrollRevealProps["direction"]>, string> = {
+  up: "translate3d(0, 40px, 0)",
+  down: "translate3d(0, -40px, 0)",
+  left: "translate3d(40px, 0, 0)",
+  right: "translate3d(-40px, 0, 0)"
 };
 
 const ScrollReveal: React.FC<ScrollRevealProps> = ({
@@ -21,21 +20,47 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   delay = 0,
   duration = 0.6
 }) => {
-  const offset = directionOffset[direction];
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "-50px" }
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: offset.x, y: offset.y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{
-        duration,
-        delay,
-        ease: [0.25, 0.1, 0.25, 1]
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translate3d(0, 0, 0)" : directionOffset[direction],
+        transition: `opacity ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) ${delay}s, transform ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) ${delay}s`,
+        willChange: visible ? "auto" : "opacity, transform"
       }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 

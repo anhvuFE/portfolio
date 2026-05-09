@@ -8,7 +8,9 @@ const ConstellationBackground: React.FC = () => {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
+    let isVisible = true;
+    let isInViewport = true;
 
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
@@ -195,13 +197,50 @@ const ConstellationBackground: React.FC = () => {
       animationFrameId = requestAnimationFrame(animate);
     };
 
+    const start = () => {
+      if (animationFrameId !== null) return;
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const stop = () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    const sync = () => {
+      if (isVisible && isInViewport) start();
+      else stop();
+    };
+
+    const handleVisibility = () => {
+      isVisible = !document.hidden;
+      sync();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          isInViewport = e.isIntersecting;
+        }
+        sync();
+      },
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+
     init();
-    animationFrameId = requestAnimationFrame(animate);
+    start();
 
     return () => {
       window.removeEventListener("resize", setCanvasSize);
       window.removeEventListener("mousemove", handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      io.disconnect();
+      stop();
     };
   }, []);
 

@@ -12,27 +12,43 @@ const CursorGlow: React.FC = () => {
     let mouseY = 0;
     let currentX = 0;
     let currentY = 0;
+    let frameId: number | null = null;
+    let pendingFrame = false;
+
+    const tick = () => {
+      pendingFrame = false;
+      const dx = mouseX - currentX;
+      const dy = mouseY - currentY;
+      currentX += dx * 0.08;
+      currentY += dy * 0.08;
+
+      glow.style.transform = `translate(${currentX - 200}px, ${currentY - 200}px)`;
+
+      // Stop animating once we're effectively at rest
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+        frameId = null;
+        return;
+      }
+      frameId = requestAnimationFrame(tick);
+    };
+
+    const requestTick = () => {
+      if (pendingFrame || frameId !== null) return;
+      pendingFrame = true;
+      frameId = requestAnimationFrame(tick);
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-    };
-
-    // Smooth follow with lerp
-    const animate = () => {
-      currentX += (mouseX - currentX) * 0.08;
-      currentY += (mouseY - currentY) * 0.08;
-
-      glow.style.transform = `translate(${currentX - 200}px, ${currentY - 200}px)`;
-      requestAnimationFrame(animate);
+      requestTick();
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-    const frameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      cancelAnimationFrame(frameId);
+      if (frameId !== null) cancelAnimationFrame(frameId);
     };
   }, []);
 

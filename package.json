@@ -4,15 +4,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^6.1.0",
     "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.8",
     "@mui/lab": "^7.0.1-beta.22",
     "@mui/material": "^7.3.8",
-    "antd": "^6.3.1",
-    "framer-motion": "^12.38.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-github-calendar": "^5.0.5",
@@ -54,6 +51,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "gh-pages": "^6.3.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3"
   }
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
-import { ConfigProvider, theme as antdTheme } from "antd";
 import "./App.css";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
@@ -98,60 +97,19 @@ const theme = createTheme({
   },
 });
 
-const antThemeConfig = {
-  algorithm: antdTheme.darkAlgorithm,
-  token: {
-    colorPrimary: "#0eaddf",
-    colorLink: "#0eaddf",
-    colorLinkHover: "#3dc4ee",
-    colorBgContainer: "#161616",
-    colorBgElevated: "#1a1a1a",
-    colorText: "#e6edf3",
-    colorTextSecondary: "#8b949e",
-    colorBorder: "rgba(255,255,255,0.1)",
-    borderRadius: 8,
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-    ].join(","),
-  },
-  components: {
-    Button: {
-      controlHeight: 40,
-      fontSize: 16,
-      borderRadiusLG: 8,
-    },
-    Input: {
-      controlHeight: 40,
-      fontSize: 14,
-      borderRadiusLG: 8,
-    },
-    Card: {
-      borderRadiusLG: 12,
-    },
-  },
-};
-
 function App(): React.ReactElement {
   return (
     <ThemeProvider theme={theme}>
-      <ConfigProvider theme={antThemeConfig}>
-        <CssBaseline />
-        <CursorGlow />
-        <Header />
-        <main className="main">
-          <Home />
-          <ScrollReveal direction="up">
-            <BentoGrid />
-          </ScrollReveal>
-          <Footer />
-        </main>
-      </ConfigProvider>
+      <CssBaseline />
+      <CursorGlow />
+      <Header />
+      <main className="main">
+        <Home />
+        <ScrollReveal direction="up">
+          <BentoGrid />
+        </ScrollReveal>
+        <Footer />
+      </main>
     </ThemeProvider>
   );
 }

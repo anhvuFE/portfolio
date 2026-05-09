@@ -28,16 +28,16 @@ import {
   OpenInNew as OpenIcon
 } from "@mui/icons-material";
 
-import ssl from "../../assets/SSL.jpg";
-import nwc from "../../assets/NWC.jpg";
-import swe from "../../assets/SWE.jpg";
-import wed from "../../assets/WED.jpg";
-import enw from "../../assets/ENW.jpg";
-import project from "../../assets/Project.jpg";
-import pmg from "../../assets/PMG.jpg";
-import design from "../../assets/Design.jpg";
-import aws from "../../assets/CERTIFICATE_LANDING_PAGE~HN06MIP031ZR.jpeg";
-import backend from "../../assets/CERTIFICATE_LANDING_PAGE~JX9RP6QIBWPS.jpeg";
+import ssl from "../../assets/SSL.webp";
+import nwc from "../../assets/NWC.webp";
+import swe from "../../assets/SWE.webp";
+import wed from "../../assets/WED.webp";
+import enw from "../../assets/ENW.webp";
+import project from "../../assets/Project.webp";
+import pmg from "../../assets/PMG.webp";
+import design from "../../assets/Design.webp";
+import aws from "../../assets/CERTIFICATE_LANDING_PAGE~HN06MIP031ZR.webp";
+import backend from "../../assets/CERTIFICATE_LANDING_PAGE~JX9RP6QIBWPS.webp";
 
 interface CertificateItem {
   id: number;
@@ -424,6 +424,7 @@ const Certificate: React.FC = () => {
                   background: "rgba(255, 255, 255, 0.02)"
                 }}>
                   <img src={selectedCertificate.image} alt={selectedCertificate.title}
+                    loading="lazy" decoding="async"
                     style={{ width: "100%", height: "auto", objectFit: "contain" }} />
                 </Box>
                 <Box sx={{ p: 3 }}>
