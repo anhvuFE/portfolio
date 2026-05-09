@@ -19,8 +19,13 @@ import {
   GitHub as GitHubIcon,
   LinkedIn as LinkedInIcon,
   Facebook as FacebookIcon,
-  MailOutline as MailIcon
+  MailOutline as MailIcon,
+  Search as SearchIcon
 } from "@mui/icons-material";
+
+interface HeaderProps {
+  onOpenPalette?: () => void;
+}
 
 interface NavItem {
   id: string;
@@ -36,11 +41,18 @@ const navItems: NavItem[] = [
   { id: "contact", label: "Contact" },
 ];
 
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ onOpenPalette }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [isApple, setIsApple] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      setIsApple(/Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent));
+    }
+  }, []);
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -167,19 +179,68 @@ const Header: React.FC = () => {
                     {item.label}
                   </Box>
                 ))}
+                {onOpenPalette && (
+                  <Box
+                    component="button"
+                    onClick={onOpenPalette}
+                    aria-label="Open command palette"
+                    sx={{
+                      ml: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.75,
+                      px: 1.25,
+                      py: 0.5,
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: 1.5,
+                      background: "rgba(255, 255, 255, 0.02)",
+                      color: "#6e7681",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      fontSize: "0.75rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: "#0eaddf",
+                        borderColor: "rgba(14, 173, 223, 0.3)",
+                        background: "rgba(14, 173, 223, 0.04)"
+                      }
+                    }}
+                  >
+                    <SearchIcon sx={{ fontSize: 14 }} />
+                    <Box component="span" sx={{ fontFamily: '"Fira Code", monospace' }}>
+                      {isApple ? "⌘ K" : "Ctrl K"}
+                    </Box>
+                  </Box>
+                )}
               </Box>
             ) : (
-              <IconButton
-                edge="end"
-                onClick={() => setIsMenuOpen(true)}
-                sx={{
-                  color: "#e6edf3",
-                  width: 40,
-                  height: 40
-                }}
-              >
-                <MenuIcon fontSize="small" />
-              </IconButton>
+              <Box sx={{ display: "flex", gap: 0.5 }}>
+                {onOpenPalette && (
+                  <IconButton
+                    onClick={onOpenPalette}
+                    aria-label="Open command palette"
+                    sx={{
+                      color: "#e6edf3",
+                      width: 40,
+                      height: 40
+                    }}
+                  >
+                    <SearchIcon fontSize="small" />
+                  </IconButton>
+                )}
+                <IconButton
+                  edge="end"
+                  onClick={() => setIsMenuOpen(true)}
+                  aria-label="Open menu"
+                  sx={{
+                    color: "#e6edf3",
+                    width: 40,
+                    height: 40
+                  }}
+                >
+                  <MenuIcon fontSize="small" />
+                </IconButton>
+              </Box>
             )}
           </Toolbar>
         </Container>
