@@ -5,15 +5,18 @@ import {
   useReducedMotion,
   useSpring,
   type SpringOptions,
-  type Transition,
 } from "motion/react";
 
 /**
  * Parallax starfield background, ported from Animate UI's Stars Background
  * (https://animate-ui.com/docs/backgrounds/stars) into plain MUI + inline
- * styles (the original ships as Tailwind classes). Stars are drawn as a single
- * `box-shadow` paint per layer for cheap rendering; layers drift upward on a
- * loop and shift with the pointer via spring-smoothed motion values.
+ * styles. Stars are drawn as a single `box-shadow` paint per layer; layers
+ * drift and shift with the pointer.
+ *
+ * Performance: box-shadow starfields are paint-heavy, so we (1) keep star
+ * counts modest, (2) set `will-change: transform` to promote each layer to its
+ * own GPU layer (drift/parallax then composite instead of repainting), and
+ * (3) pause the pointer parallax and drift while the hero is off-screen.
  */
 
 function generateStars(count: number, starColor: string): string {
@@ -29,15 +32,17 @@ function generateStars(count: number, starColor: string): string {
 interface StarLayerProps {
   count: number;
   size: number;
-  transition: Transition;
+  driftDuration: number;
   starColor: string;
+  active: boolean;
 }
 
 const StarLayer: React.FC<StarLayerProps> = ({
   count,
   size,
-  transition,
+  driftDuration,
   starColor,
+  active,
 }) => {
   const [boxShadow, setBoxShadow] = React.useState("");
 
@@ -57,9 +62,16 @@ const StarLayer: React.FC<StarLayerProps> = ({
   return (
     <motion.div
       aria-hidden
-      animate={{ y: [0, -2000] }}
-      transition={transition}
-      style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 2000 }}
+      animate={active ? { y: [0, -2000] } : undefined}
+      transition={{ repeat: Infinity, duration: driftDuration, ease: "linear" }}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: 2000,
+        willChange: "transform",
+      }}
     >
       <div style={dot} />
       <div style={{ ...dot, top: 2000 }} />
@@ -84,14 +96,30 @@ const StarsBackground: React.FC<StarsBackgroundProps> = ({
   starColor = "#ffffff",
 }) => {
   const prefersReducedMotion = useReducedMotion();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [inView, setInView] = React.useState(true);
 
-  const offsetX = useMotionValue(1);
-  const offsetY = useMotionValue(1);
+  const offsetX = useMotionValue(0);
+  const offsetY = useMotionValue(0);
   const springX = useSpring(offsetX, transition);
   const springY = useSpring(offsetY, transition);
 
+  // Only run drift/parallax while the hero is on screen.
   React.useEffect(() => {
-    if (prefersReducedMotion) return;
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) setInView(e.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (prefersReducedMotion || !inView) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       const centerX = window.innerWidth / 2;
@@ -102,15 +130,13 @@ const StarsBackground: React.FC<StarsBackgroundProps> = ({
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [offsetX, offsetY, factor, prefersReducedMotion]);
+  }, [offsetX, offsetY, factor, prefersReducedMotion, inView]);
 
-  const drift = (duration: number): Transition =>
-    prefersReducedMotion
-      ? { duration: 0 }
-      : { repeat: Infinity, duration, ease: "linear" };
+  const active = !prefersReducedMotion && inView;
 
   return (
     <div
+      ref={containerRef}
       aria-hidden
       style={{
         position: "absolute",
@@ -122,10 +148,12 @@ const StarsBackground: React.FC<StarsBackgroundProps> = ({
           "radial-gradient(ellipse at bottom, #10242e 0%, #0a0a0a 60%)",
       }}
     >
-      <motion.div style={{ x: springX, y: springY, width: "100%", height: "100%" }}>
-        <StarLayer count={1000} size={1} transition={drift(speed)} starColor={starColor} />
-        <StarLayer count={400} size={2} transition={drift(speed * 2)} starColor={starColor} />
-        <StarLayer count={200} size={3} transition={drift(speed * 3)} starColor={starColor} />
+      <motion.div
+        style={{ x: springX, y: springY, width: "100%", height: "100%", willChange: "transform" }}
+      >
+        <StarLayer count={300} size={1} driftDuration={speed} starColor={starColor} active={active} />
+        <StarLayer count={120} size={2} driftDuration={speed * 2} starColor={starColor} active={active} />
+        <StarLayer count={60} size={3} driftDuration={speed * 3} starColor={starColor} active={active} />
       </motion.div>
     </div>
   );
