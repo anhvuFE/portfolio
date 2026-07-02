@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Box, Container, Paper, IconButton, Typography, Button } from "@mui/material";
 import { GitHub, Facebook, LinkedIn, Email, ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
-import ConstellationBackground from "./ConstellationBackground";
+import StarsBackground from "./StarsBackground";
+import { CountingNumber } from "../text/CountingNumber";
+import { GradientText } from "../text/GradientText";
 import NewAvatarWebp from "../../assets/avatar.webp";
 import NewAvatarJpg from "../../assets/avatar.jpg";
 import "./home.css";
@@ -18,7 +20,8 @@ const bounce = keyframes`
 `;
 
 interface StatItem {
-  value: string;
+  number: number;
+  suffix?: string;
   label: string;
 }
 
@@ -31,9 +34,9 @@ interface SocialLink {
 const roles = ["Full Stack Developer", "Frontend-leaning Engineer", "React & TypeScript"];
 
 const stats: StatItem[] = [
-  { value: "3+", label: "Years Experience" },
-  { value: "4", label: "Companies" },
-  { value: "10+", label: "Technologies" },
+  { number: 3, suffix: "+", label: "Years Experience" },
+  { number: 4, label: "Companies" },
+  { number: 10, suffix: "+", label: "Technologies" },
 ];
 
 const socialLinks: SocialLink[] = [
@@ -109,7 +112,8 @@ const Home: React.FC = () => {
               color: "#0eaddf"
             }}
           >
-            {stat.value}
+            <CountingNumber number={stat.number} inView />
+            {stat.suffix}
           </Typography>
           <Typography variant="body2" sx={{ color: "#6e7681" }}>
             {stat.label}
@@ -163,7 +167,7 @@ const Home: React.FC = () => {
         background: "#0a0a0a"
       }}
     >
-      <ConstellationBackground />
+      <StarsBackground />
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
         <Box
           sx={{
@@ -250,11 +254,13 @@ const Home: React.FC = () => {
               sx={{
                 fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
                 fontWeight: 800,
-                mb: 2,
-                color: "#0eaddf"
+                mb: 2
               }}
             >
-              Vũ Xuân Anh
+              <GradientText
+                text="Vũ Xuân Anh"
+                gradient="linear-gradient(90deg, #0eaddf 0%, #7cdcf3 25%, #a855f7 50%, #7cdcf3 75%, #0eaddf 100%)"
+              />
             </Typography>
 
             <Typography
@@ -349,6 +355,9 @@ const Home: React.FC = () => {
         <Box
           sx={{
             display: { xs: "none", md: "flex" },
+            // Hide on short viewports where the hero content reaches the
+            // bottom and the hint would overlap the CTA buttons.
+            "@media (max-height: 860px)": { display: "none" },
             position: "absolute",
             bottom: 40,
             left: "50%",
