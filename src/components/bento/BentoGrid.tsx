@@ -66,6 +66,27 @@ const gridVariants = {
   show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
 };
 
+// Prop-less preview elements and grid placements are hoisted to stable
+// module-level references so they don't change identity on every render and
+// defeat BentoCard's React.memo when openSection changes.
+const aboutPreview = <AboutPreview />;
+const skillsPreview = <SkillsPreview />;
+const githubPreview = <GitHubPreview />;
+const experiencePreview = <ExperiencePreview />;
+const certsPreview = <CertsPreview />;
+const servicesPreview = <ServicesPreview />;
+const projectsPreview = <ProjectsPreview />;
+const contactPreview = <ContactPreview />;
+
+const gridAbout = { xs: "1 / -1", md: "1 / span 4" };
+const gridSkillsCol = { md: "5 / span 2" };
+const gridSkillsRow = { md: "span 2" };
+const gridGithub = { md: "1 / span 4" };
+const gridExperience = { md: "1 / span 2" };
+const gridCerts = { md: "3 / span 2" };
+const gridServices = { md: "5 / span 2" };
+const gridFull = { xs: "1 / -1", md: "1 / -1" };
+
 const BentoGrid: React.FC = () => {
   const [openSection, setOpenSection] = useState<SectionKey | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -159,64 +180,64 @@ const BentoGrid: React.FC = () => {
           <BentoCard
             title="About Me"
             subtitle="Profile"
-            preview={<AboutPreview />}
+            preview={aboutPreview}
             onClick={handlers.about}
-            gridColumn={{ xs: "1 / -1", md: "1 / span 4" }}
+            gridColumn={gridAbout}
           />
           <BentoCard
             title="Tech Stack"
             subtitle="Skills"
             accent="#a855f7"
-            preview={<SkillsPreview />}
+            preview={skillsPreview}
             onClick={handlers.skills}
-            gridColumn={{ md: "5 / span 2" }}
-            gridRow={{ md: "span 2" }}
+            gridColumn={gridSkillsCol}
+            gridRow={gridSkillsRow}
           />
           <BentoCard
             title="GitHub Activity"
             subtitle="Open Source"
-            preview={<GitHubPreview />}
+            preview={githubPreview}
             onClick={handlers.github}
-            gridColumn={{ md: "1 / span 4" }}
+            gridColumn={gridGithub}
           />
           <BentoCard
             title="Experience"
             subtitle="Career"
             accent="#22c55e"
-            preview={<ExperiencePreview />}
+            preview={experiencePreview}
             onClick={handlers.experience}
-            gridColumn={{ md: "1 / span 2" }}
+            gridColumn={gridExperience}
           />
           <BentoCard
             title="Certificates"
             subtitle="Achievements"
             accent="#FFD700"
-            preview={<CertsPreview />}
+            preview={certsPreview}
             onClick={handlers.certificates}
-            gridColumn={{ md: "3 / span 2" }}
+            gridColumn={gridCerts}
           />
           <BentoCard
             title="Services"
             subtitle="What I do"
             accent="#f5576c"
-            preview={<ServicesPreview />}
+            preview={servicesPreview}
             onClick={handlers.services}
-            gridColumn={{ md: "5 / span 2" }}
+            gridColumn={gridServices}
           />
           <BentoCard
             title="Projects"
             subtitle="Case Studies"
             accent="#a855f7"
-            preview={<ProjectsPreview />}
+            preview={projectsPreview}
             onClick={handlers.projects}
-            gridColumn={{ xs: "1 / -1", md: "1 / -1" }}
+            gridColumn={gridFull}
           />
           <BentoCard
             title="Let's Connect"
             subtitle="Get in touch"
-            preview={<ContactPreview />}
+            preview={contactPreview}
             onClick={handlers.contact}
-            gridColumn={{ xs: "1 / -1", md: "1 / -1" }}
+            gridColumn={gridFull}
           />
         </Box>
       </Container>
