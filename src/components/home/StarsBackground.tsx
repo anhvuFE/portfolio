@@ -151,9 +151,8 @@ const StarsBackground: React.FC<StarsBackgroundProps> = ({
       <motion.div
         style={{ x: springX, y: springY, width: "100%", height: "100%", willChange: "transform" }}
       >
-        <StarLayer count={300} size={1} driftDuration={speed} starColor={starColor} active={active} />
-        <StarLayer count={120} size={2} driftDuration={speed * 2} starColor={starColor} active={active} />
-        <StarLayer count={60} size={3} driftDuration={speed * 3} starColor={starColor} active={active} />
+        <StarLayer count={320} size={1} driftDuration={speed} starColor={starColor} active={active} />
+        <StarLayer count={130} size={2} driftDuration={speed * 2} starColor={starColor} active={active} />
       </motion.div>
     </div>
   );
