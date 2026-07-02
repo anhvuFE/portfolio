@@ -1,4 +1,6 @@
 import React, { useMemo } from "react";
+import StaggerReveal from "../effects/StaggerReveal";
+import { motion } from "motion/react";
 import {
   Container,
   Typography,
@@ -19,6 +21,10 @@ import {
 import AboutImg from "../../assets/avatar.webp";
 import CV from "../../assets/CV-VuXuanAnh.pdf";
 import Info from "./Info";
+
+// Named "hover" variants: hovering a card lifts it and pops its icon.
+const achievementHover = { hover: { x: 4 } };
+const achievementIconHover = { hover: { scale: 1.15, rotate: -6 } };
 
 interface TechItem {
   name: string;
@@ -102,6 +108,7 @@ const About: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
+        <StaggerReveal>
         {/* Section Header */}
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
@@ -180,6 +187,10 @@ const About: React.FC = () => {
               {achievements.map((achievement, index) => (
                 <Box
                   key={index}
+                  component={motion.div}
+                  variants={achievementHover}
+                  whileHover="hover"
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -188,15 +199,17 @@ const About: React.FC = () => {
                     borderRadius: 2,
                     background: "rgba(255, 255, 255, 0.03)",
                     border: `1px solid ${achievement.color}15`,
-                    transition: "all 0.3s ease",
+                    transition: "box-shadow 0.3s ease, border-color 0.3s ease",
                     "&:hover": {
-                      transform: "translateX(4px)",
                       boxShadow: `0 4px 12px ${achievement.color}15`,
                       borderColor: `${achievement.color}30`
                     }
                   }}
                 >
                   <Avatar
+                    component={motion.div}
+                    variants={achievementIconHover}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
                     sx={{
                       width: 44,
                       height: 44,
@@ -428,6 +441,7 @@ const About: React.FC = () => {
             </Box>
           </Grid>
         </Grid>
+        </StaggerReveal>
       </Container>
     </Box>
   );

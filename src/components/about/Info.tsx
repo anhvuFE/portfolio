@@ -5,6 +5,12 @@ import {
   BusinessCenter as BriefcaseIcon,
   Support as SupportIcon
 } from "@mui/icons-material";
+import { motion } from "motion/react";
+
+// Named "hover" variants: hovering the card (whileHover="hover") lifts it and
+// propagates the same variant to the icon, which pops.
+const cardHover = { hover: { y: -4 } };
+const iconHover = { hover: { scale: 1.15, rotate: -6 } };
 
 interface StatItem {
   icon: React.ReactElement;
@@ -40,7 +46,11 @@ const Info: React.FC = React.memo(() => {
       {stats.map((stat, index) => (
         <Grid size={{ xs: 12, sm: 4 }} key={index} sx={{ display: "flex" }}>
           <Paper
+            component={motion.div}
             elevation={0}
+            variants={cardHover}
+            whileHover="hover"
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             sx={{
               p: 2.5,
               width: "100%",
@@ -50,9 +60,8 @@ const Info: React.FC = React.memo(() => {
               display: "flex",
               alignItems: "center",
               gap: 2,
-              transition: "all 0.3s ease",
+              transition: "box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease",
               "&:hover": {
-                transform: "translateY(-4px)",
                 boxShadow: `0 8px 16px ${stat.color}20`,
                 borderColor: `${stat.color}40`,
                 background: "rgba(255, 255, 255, 0.05)"
@@ -60,6 +69,9 @@ const Info: React.FC = React.memo(() => {
             }}
           >
             <Box
+              component={motion.div}
+              variants={iconHover}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
               sx={{
                 width: 48,
                 height: 48,

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import StaggerReveal from "../effects/StaggerReveal";
 import {
   Container,
   Typography,
@@ -103,6 +104,7 @@ const Services: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
+        <StaggerReveal>
         <Box sx={{ textAlign: "center", mb: 8 }}>
           <Typography
             variant="h2"
@@ -365,6 +367,7 @@ const Services: React.FC = () => {
             </DialogActions>
           </Dialog>
         ))}
+        </StaggerReveal>
       </Container>
     </Box>
   );

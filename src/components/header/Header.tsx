@@ -22,6 +22,7 @@ import {
   MailOutline as MailIcon,
   Search as SearchIcon
 } from "@mui/icons-material";
+import { motion } from "motion/react";
 
 interface HeaderProps {
   onOpenPalette?: () => void;
@@ -140,45 +141,54 @@ const Header: React.FC<HeaderProps> = ({ onOpenPalette }) => {
                   gap: 0.5
                 }}
               >
-                {navItems.map((item) => (
-                  <Box
-                    key={item.id}
-                    component="a"
-                    href={`#${item.id}`}
-                    onClick={(e: React.MouseEvent) => {
-                      e.preventDefault();
-                      handleNavClick(item.id);
-                    }}
-                    sx={{
-                      color: activeSection === item.id ? "#0eaddf" : "#6e7681",
-                      textDecoration: "none",
-                      fontSize: "0.875rem",
-                      fontWeight: activeSection === item.id ? 600 : 500,
-                      px: 1.5,
-                      py: 0.75,
-                      borderRadius: 1,
-                      position: "relative",
-                      transition: "all 0.3s ease",
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "#e6edf3",
-                      },
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: 0,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: activeSection === item.id ? "100%" : "0%",
-                        height: "1px",
-                        background: "#0eaddf",
-                        transition: "width 0.3s ease",
-                      }
-                    }}
-                  >
-                    {item.label}
-                  </Box>
-                ))}
+                {navItems.map((item) => {
+                  const isActive = activeSection === item.id;
+                  return (
+                    <Box
+                      key={item.id}
+                      component="a"
+                      href={`#${item.id}`}
+                      onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        handleNavClick(item.id);
+                      }}
+                      sx={{
+                        color: isActive ? "#0eaddf" : "#6e7681",
+                        textDecoration: "none",
+                        fontSize: "0.875rem",
+                        fontWeight: isActive ? 600 : 500,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: 1.5,
+                        position: "relative",
+                        transition: "color 0.3s ease",
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: isActive ? "#0eaddf" : "#e6edf3",
+                        }
+                      }}
+                    >
+                      {isActive && (
+                        <Box
+                          component={motion.span}
+                          layoutId="nav-highlight"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                          sx={{
+                            position: "absolute",
+                            inset: 0,
+                            borderRadius: 1.5,
+                            background: "rgba(14, 173, 223, 0.12)",
+                            border: "1px solid rgba(14, 173, 223, 0.25)",
+                            zIndex: 0
+                          }}
+                        />
+                      )}
+                      <Box component="span" sx={{ position: "relative", zIndex: 1 }}>
+                        {item.label}
+                      </Box>
+                    </Box>
+                  );
+                })}
                 {onOpenPalette && (
                   <Box
                     component="button"

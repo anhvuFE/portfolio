@@ -1,6 +1,19 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { ArrowOutward } from "@mui/icons-material";
+import { motion } from "motion/react";
+
+// Item variant consumed from the parent grid's stagger container. The lift on
+// hover is done with motion (whileHover) rather than a CSS transform so it does
+// not fight the inline transform motion leaves after the reveal animation.
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
+};
 
 export interface BentoCardProps {
   title: string;
@@ -23,6 +36,10 @@ const BentoCard: React.FC<BentoCardProps> = React.memo(({
 }) => {
   return (
     <Box
+      component={motion.div}
+      variants={cardVariants}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
       role="button"
       tabIndex={0}
       onClick={onClick}
@@ -45,9 +62,8 @@ const BentoCard: React.FC<BentoCardProps> = React.memo(({
         flexDirection: "column",
         gap: 2,
         overflow: "hidden",
-        transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "border-color 0.35s ease, box-shadow 0.35s ease",
         "&:hover, &:focus-visible": {
-          transform: "translateY(-4px)",
           borderColor: `${accent}55`,
           boxShadow: `0 16px 40px ${accent}20`,
           "& .bento-arrow": { opacity: 1, transform: "translate(2px, -2px)" },

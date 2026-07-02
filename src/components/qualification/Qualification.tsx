@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import StaggerReveal from "../effects/StaggerReveal";
 import {
   Container,
   Typography,
@@ -175,6 +176,7 @@ const Qualification: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
+        <StaggerReveal>
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
             variant="h2"
@@ -475,6 +477,7 @@ const Qualification: React.FC = () => {
             </TabPanel>
           </Box>
         </Paper>
+        </StaggerReveal>
       </Container>
     </Box>
   );
