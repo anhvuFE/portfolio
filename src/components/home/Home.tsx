@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import { Box, Container, Paper, IconButton, Typography, Button } from "@mui/material";
 import { GitHub, Facebook, LinkedIn, Email, ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
 import StarsBackground from "./StarsBackground";
+import TypedRole from "./TypedRole";
 import { CountingNumber } from "../text/CountingNumber";
 import { GradientText } from "../text/GradientText";
 import NewAvatarWebp from "../../assets/avatar.webp";
@@ -31,8 +32,6 @@ interface SocialLink {
   label: string;
 }
 
-const roles = ["Full Stack Developer", "Frontend-leaning Engineer", "React & TypeScript"];
-
 const stats: StatItem[] = [
   { number: 3, suffix: "+", label: "Years Experience" },
   { number: 4, label: "Companies" },
@@ -46,61 +45,6 @@ const socialLinks: SocialLink[] = [
 ];
 
 const Home: React.FC = () => {
-  const [displayText, setDisplayText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const [isActive, setIsActive] = useState(true);
-
-  const handleRoleChange = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % roles.length);
-  }, []);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const updateVisible = () => setIsActive(!document.hidden);
-
-    document.addEventListener("visibilitychange", updateVisible);
-
-    if (typeof IntersectionObserver !== "undefined") {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            setIsActive(e.isIntersecting && !document.hidden);
-          }
-        },
-        { threshold: 0 }
-      );
-      io.observe(el);
-      return () => {
-        document.removeEventListener("visibilitychange", updateVisible);
-        io.disconnect();
-      };
-    }
-    return () => document.removeEventListener("visibilitychange", updateVisible);
-  }, []);
-
-  useEffect(() => {
-    if (!isActive) return;
-    const currentRole = roles[currentIndex];
-    let index = 0;
-    let nextTimeout: ReturnType<typeof setTimeout> | null = null;
-    const timer = setInterval(() => {
-      setDisplayText(currentRole.slice(0, index));
-      index++;
-      if (index > currentRole.length) {
-        clearInterval(timer);
-        nextTimeout = setTimeout(handleRoleChange, 2000);
-      }
-    }, 100);
-
-    return () => {
-      clearInterval(timer);
-      if (nextTimeout) clearTimeout(nextTimeout);
-    };
-  }, [currentIndex, handleRoleChange, isActive]);
-
   const statsRendered = useMemo(
     () =>
       stats.map((stat, index) => (
@@ -155,7 +99,6 @@ const Home: React.FC = () => {
     <Box
       component="section"
       id="home"
-      ref={sectionRef}
       sx={{
         position: "relative",
         minHeight: "100vh",
@@ -263,19 +206,7 @@ const Home: React.FC = () => {
               />
             </Typography>
 
-            <Typography
-              variant="h4"
-              sx={{
-                fontSize: { xs: "1.5rem", md: "2rem" },
-                fontWeight: 600,
-                mb: 3,
-                color: "#0eaddf",
-                minHeight: "40px"
-              }}
-            >
-              {displayText}
-              <span style={{ animation: "blink 1s infinite", color: "#0eaddf" }}>|</span>
-            </Typography>
+            <TypedRole />
 
             <Typography
               variant="body1"

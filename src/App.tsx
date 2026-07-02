@@ -102,6 +102,7 @@ function App(): React.ReactElement {
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   const closePalette = useCallback(() => setPaletteOpen(false), []);
+  const openPalette = useCallback(() => setPaletteOpen(true), []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -118,7 +119,7 @@ function App(): React.ReactElement {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <CursorGlow />
-      <Header onOpenPalette={() => setPaletteOpen(true)} />
+      <Header onOpenPalette={openPalette} />
       <main className="main">
         <Home />
         <BentoGrid />

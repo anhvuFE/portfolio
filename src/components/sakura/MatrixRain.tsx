@@ -171,4 +171,6 @@ const FloatingParticles: React.FC = () => {
   );
 };
 
-export default FloatingParticles;
+// Memoized: takes no props, so it should never re-render once mounted even
+// though the Footer above it re-renders on every terminal keystroke/tick.
+export default React.memo(FloatingParticles);
