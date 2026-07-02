@@ -152,13 +152,37 @@ const STAR_COLOR = "#cfefff";
 
 const ConstellationGroup: React.FC<{
   data: Constellation;
+  index: number;
   active: boolean;
+  reducedMotion: boolean;
   onEnter: () => void;
   onLeave: () => void;
-}> = ({ data, active, onEnter, onLeave }) => {
+}> = ({ data, index, active, reducedMotion, onEnter, onLeave }) => {
   const { stars, lines, at } = data;
+
+  // Gentle continuous drift so constellations keep moving without the pointer.
+  // Each one gets its own amplitude/duration/phase so they never move in unison.
+  const xAmp = 4 + (index % 4) * 1.6;
+  const yAmp = 3.5 + ((index + 2) % 4) * 1.6;
+  const dur = 11 + (index % 5) * 1.7;
+  const float = reducedMotion
+    ? undefined
+    : {
+        x: [0, xAmp, 0, -xAmp, 0],
+        y: [0, -yAmp, 0, yAmp, 0],
+      };
+
   return (
     <g transform={`translate(${at.x} ${at.y}) scale(${at.scale})`}>
+      <motion.g
+        animate={float}
+        transition={{
+          duration: dur,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: index * 0.4,
+        }}
+      >
       {/* Transparent hit area so the thin lines are easy to hover. */}
       <rect
         x={-6}
@@ -216,6 +240,7 @@ const ConstellationGroup: React.FC<{
       >
         {data.name}
       </text>
+      </motion.g>
     </g>
   );
 };
@@ -292,7 +317,9 @@ const ConstellationField: React.FC = () => {
             <ConstellationGroup
               key={c.name}
               data={c}
+              index={i}
               active={hovered === i}
+              reducedMotion={!!prefersReducedMotion}
               onEnter={() => setHovered(i)}
               onLeave={() => setHovered((prev) => (prev === i ? null : prev))}
             />
