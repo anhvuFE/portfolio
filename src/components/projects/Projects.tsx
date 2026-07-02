@@ -1,4 +1,5 @@
 import React from "react";
+import StaggerReveal from "../effects/StaggerReveal";
 import {
   Box,
   Container,
@@ -232,6 +233,7 @@ const Projects: React.FC = () => {
       }}
     >
       <Container maxWidth="md">
+        <StaggerReveal>
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
             variant="h2"
@@ -254,6 +256,7 @@ const Projects: React.FC = () => {
             <ProjectCard key={p.id} project={p} />
           ))}
         </Stack>
+        </StaggerReveal>
       </Container>
     </Box>
   );

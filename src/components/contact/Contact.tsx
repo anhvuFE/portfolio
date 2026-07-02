@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import StaggerReveal from "../effects/StaggerReveal";
 import emailjs from "@emailjs/browser";
 import {
   Box,
@@ -226,6 +227,7 @@ const Contact: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
+        <StaggerReveal>
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
             variant="h2"
@@ -574,6 +576,7 @@ const Contact: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
+        </StaggerReveal>
       </Container>
 
       <Snackbar

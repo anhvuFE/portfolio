@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import StaggerReveal from "../effects/StaggerReveal";
 import {
   Container,
   Typography,
@@ -102,6 +103,7 @@ const About: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
+        <StaggerReveal>
         {/* Section Header */}
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
@@ -428,6 +430,7 @@ const About: React.FC = () => {
             </Box>
           </Grid>
         </Grid>
+        </StaggerReveal>
       </Container>
     </Box>
   );
