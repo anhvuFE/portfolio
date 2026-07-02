@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Container, Typography, IconButton } from "@mui/material";
 import { ArrowUpward as ArrowUpIcon } from "@mui/icons-material";
+import { useReducedMotion } from "motion/react";
 import MatrixRain from "../sakura/MatrixRain";
 import { keyframes } from "@emotion/react";
 
@@ -178,11 +179,20 @@ function runCommand(input: string): CommandResult {
 }
 
 const Footer: React.FC = () => {
-  const [history, setHistory] = useState<Line[]>(initialLines);
+  const prefersReducedMotion = useReducedMotion();
+  // Intro types the opening lines out; the input is only shown once done.
+  // Reduced motion skips straight to the full, interactive terminal.
+  const [history, setHistory] = useState<Line[]>(
+    prefersReducedMotion ? initialLines : []
+  );
+  const [typing, setTyping] = useState<string | null>(null);
+  const [introDone, setIntroDone] = useState<boolean>(!!prefersReducedMotion);
   const [input, setInput] = useState("");
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const introStartedRef = useRef(false);
 
   const commandHistory = useMemo(
     () => history.filter((l) => l.prompt && l.command).map((l) => l.command as string),
@@ -203,7 +213,66 @@ const Footer: React.FC = () => {
     if (bodyRef.current) {
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
     }
-  }, [history]);
+  }, [history, typing]);
+
+  // Replay the opening lines as a typed-out terminal session once the footer
+  // scrolls into view. Command lines type char-by-char; outputs appear after.
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const el = terminalRef.current;
+    if (!el) return;
+
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        timers.push(setTimeout(resolve, ms));
+      });
+
+    const runIntro = async () => {
+      for (const line of initialLines) {
+        if (cancelled) return;
+        if (line.prompt && line.command) {
+          const cmd = line.command;
+          for (let i = 1; i <= cmd.length; i++) {
+            if (cancelled) return;
+            setTyping(cmd.slice(0, i));
+            await sleep(45);
+          }
+          await sleep(300);
+          if (cancelled) return;
+          setTyping(null);
+          setHistory((prev) => [...prev, line]);
+          await sleep(200);
+        } else {
+          setHistory((prev) => [...prev, line]);
+          await sleep(260);
+        }
+      }
+      if (!cancelled) setIntroDone(true);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && !introStartedRef.current) {
+            introStartedRef.current = true;
+            runIntro();
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(el);
+
+    return () => {
+      cancelled = true;
+      io.disconnect();
+      timers.forEach(clearTimeout);
+    };
+  }, [prefersReducedMotion]);
 
   const submit = useCallback(() => {
     const value = input;
@@ -288,6 +357,7 @@ const Footer: React.FC = () => {
 
       <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
         <Box
+          ref={terminalRef}
           onClick={focusInput}
           sx={{
             background: "#0d1117",
@@ -360,6 +430,30 @@ const Footer: React.FC = () => {
               </Box>
             ))}
 
+            {typing !== null && (
+              <Box sx={{ minHeight: "1.7em", whiteSpace: "nowrap" }}>
+                <Box component="span" sx={{ color: "#22c55e" }}>vu@portfolio</Box>
+                <Box component="span" sx={{ color: "#6e7681" }}>:</Box>
+                <Box component="span" sx={{ color: "#0eaddf" }}>~</Box>
+                <Box component="span" sx={{ color: "#6e7681" }}>$ </Box>
+                <Box component="span" sx={{ color: "#e6edf3" }}>{typing}</Box>
+                <Box
+                  component="span"
+                  aria-hidden
+                  sx={{
+                    display: "inline-block",
+                    width: "0.55em",
+                    height: "1em",
+                    background: "#0eaddf",
+                    verticalAlign: "text-bottom",
+                    ml: "1px",
+                    animation: `${blink} 1s step-end infinite`
+                  }}
+                />
+              </Box>
+            )}
+
+            {introDone && (
             <Box sx={{ minHeight: "1.7em", display: "flex", alignItems: "center" }}>
               <Box component="span" sx={{ color: "#22c55e" }}>vu@portfolio</Box>
               <Box component="span" sx={{ color: "#6e7681" }}>:</Box>
@@ -406,6 +500,7 @@ const Footer: React.FC = () => {
                 />
               )}
             </Box>
+            )}
           </Box>
         </Box>
 
