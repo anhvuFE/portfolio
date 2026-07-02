@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Box, Container, Paper, IconButton, Typography, Button } from "@mui/material";
 import { GitHub, Facebook, LinkedIn, Email, ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
-import ConstellationField from "./ConstellationField";
+import StarsBackground from "./StarsBackground";
 import { CountingNumber } from "../text/CountingNumber";
 import { GradientText } from "../text/GradientText";
 import NewAvatarWebp from "../../assets/avatar.webp";
@@ -167,7 +167,7 @@ const Home: React.FC = () => {
         background: "#0a0a0a"
       }}
     >
-      <ConstellationField />
+      <StarsBackground />
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
         <Box
           sx={{
