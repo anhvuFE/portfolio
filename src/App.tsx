@@ -6,7 +6,6 @@ import Home from "./components/home/Home";
 import BentoGrid from "./components/bento/BentoGrid";
 import Footer from "./components/footer/Footer";
 import CursorGlow from "./components/effects/CursorGlow";
-import ScrollReveal from "./components/effects/ScrollReveal";
 
 const CommandPalette = lazy(() => import("./components/palette/CommandPalette"));
 
@@ -122,9 +121,7 @@ function App(): React.ReactElement {
       <Header onOpenPalette={() => setPaletteOpen(true)} />
       <main className="main">
         <Home />
-        <ScrollReveal direction="up">
-          <BentoGrid />
-        </ScrollReveal>
+        <BentoGrid />
         <Footer />
       </main>
       {paletteOpen && (

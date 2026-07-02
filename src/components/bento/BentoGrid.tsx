@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense, useCallback, useEffect, useMemo } from "react";
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import { motion, useReducedMotion } from "motion/react";
 import BentoCard from "./BentoCard";
 import SectionDrawer from "./SectionDrawer";
 import {
@@ -60,8 +61,14 @@ const validKeys = new Set<SectionKey>([
   "projects"
 ]);
 
+const gridVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
+};
+
 const BentoGrid: React.FC = () => {
   const [openSection, setOpenSection] = useState<SectionKey | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const open = useCallback((key: SectionKey) => {
     setOpenSection(key);
@@ -137,6 +144,11 @@ const BentoGrid: React.FC = () => {
         </Box>
 
         <Box
+          component={motion.div}
+          variants={gridVariants}
+          initial={prefersReducedMotion ? "show" : "hidden"}
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(6, 1fr)" },
