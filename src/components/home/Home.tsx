@@ -317,4 +317,6 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+// Memoized: prop-less, so it skips re-rendering when App re-renders (e.g. the
+// command palette opening/closing) rather than re-running the whole hero.
+export default React.memo(Home);

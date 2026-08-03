@@ -17,6 +17,9 @@ const float = keyframes`
 
 const MONO = '"Fira Code", "JetBrains Mono", Menlo, Monaco, Consolas, "Courier New", monospace';
 
+// Computed once at load rather than on every Footer render (copyright line).
+const currentYear: number = new Date().getFullYear();
+
 interface Line {
   prompt?: boolean;
   command?: string;
@@ -202,8 +205,6 @@ const Footer: React.FC = () => {
   const scrollToTop = useCallback((): void => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
-  const currentYear: number = new Date().getFullYear();
 
   const focusInput = useCallback(() => {
     inputRef.current?.focus({ preventScroll: true });
@@ -525,4 +526,6 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+// Memoized: prop-less, so it skips re-rendering when App re-renders (e.g. the
+// command palette), keeping the terminal state and MatrixRain untouched.
+export default React.memo(Footer);
