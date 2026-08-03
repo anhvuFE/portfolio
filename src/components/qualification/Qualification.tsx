@@ -67,6 +67,23 @@ interface TabPanelProps {
   index: number;
 }
 
+// Kept at module scope so its identity is stable across Qualification renders;
+// defining it inline would make React remount the tab content (and replay the
+// fade) on every tab switch.
+const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
+  return (
+    <Box
+      role="tabpanel"
+      hidden={value !== index}
+      sx={{
+        animation: value === index ? `${fadeIn} 0.5s ease-out` : "none"
+      }}
+    >
+      {value === index && <Box sx={{ pt: 4 }}>{children}</Box>}
+    </Box>
+  );
+};
+
 const education: EducationItem[] = [
   {
     title: "Bachelor's degree, Information Technology",
@@ -86,32 +103,32 @@ const education: EducationItem[] = [
 
 const experience: ExperienceItem[] = [
   {
-    title: "Software Engineer",
-    subtitle: "neliSoftwares",
+    title: "Full Stack Developer",
+    subtitle: "neliSoftwares · Full-time",
     date: "Jul 2025 - Present",
     type: "work",
     skills: ["React.js", "HTML5", "Node.js", "TypeScript"]
   },
   {
-    title: "Frontend Developer",
-    subtitle: "Technixo",
-    date: "Dec 2023 - Apr 2024 · 5 months",
+    title: "Full Stack Developer",
+    subtitle: "Technixo · Full-time",
+    date: "Oct 2023 - Apr 2024 · 7 months",
     type: "work",
     skills: ["React.js", "TypeScript"]
   },
   {
-    title: "Frontend Developer",
-    subtitle: "True Connect",
-    date: "Jul 2022 - Feb 2023 · 8 months",
+    title: "Full Stack Developer",
+    subtitle: "True Connect · Full-time",
+    date: "Jul 2022 - Apr 2023 · 10 months",
     type: "work",
     skills: ["TypeScript", "JavaScript"]
   },
   {
     title: "Frontend Developer",
-    subtitle: "EZTek Solutions",
+    subtitle: "EZTek Solutions · Full-time",
     date: "Jan 2022 - Jul 2022 · 7 months",
     type: "work",
-    skills: ["React.js", "JavaScript", "HTML", "CSS"]
+    skills: ["React.js", "TypeScript", "HTML", "CSS"]
   }
 ];
 
@@ -150,20 +167,6 @@ const Qualification: React.FC = () => {
   const handleChange = useCallback((_event: React.SyntheticEvent, newValue: number): void => {
     setValue(newValue);
   }, []);
-
-  const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
-    return (
-      <Box
-        role="tabpanel"
-        hidden={value !== index}
-        sx={{
-          animation: value === index ? `${fadeIn} 0.5s ease-out` : "none"
-        }}
-      >
-        {value === index && <Box sx={{ pt: 4 }}>{children}</Box>}
-      </Box>
-    );
-  };
 
   return (
     <Box
