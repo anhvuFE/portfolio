@@ -8,6 +8,10 @@ import Footer from "./components/footer/Footer";
 import CursorGlow from "./components/effects/CursorGlow";
 
 const CommandPalette = lazy(() => import("./components/palette/CommandPalette"));
+// Lazy so returning visitors (who skip the intro) never download cobe/WebGL.
+const GalaxyIntro = lazy(() => import("./components/intro/GalaxyIntro"));
+
+const INTRO_SEEN_KEY = "introSeen_v1";
 
 const theme = createTheme({
   palette: {
@@ -100,6 +104,27 @@ const theme = createTheme({
 
 function App(): React.ReactElement {
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // Decide synchronously (before paint) so the portfolio never flashes before
+  // the intro. Shown once per browser; skipped for reduced-motion users.
+  const [showIntro, setShowIntro] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const seen = localStorage.getItem(INTRO_SEEN_KEY);
+      const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      return !seen && !reduced;
+    } catch {
+      return false;
+    }
+  });
+
+  const finishIntro = useCallback(() => {
+    setShowIntro(false);
+    try {
+      localStorage.setItem(INTRO_SEEN_KEY, "1");
+    } catch {
+      /* ignore storage failures (private mode, etc.) */
+    }
+  }, []);
 
   const closePalette = useCallback(() => setPaletteOpen(false), []);
   const openPalette = useCallback(() => setPaletteOpen(true), []);
@@ -128,6 +153,13 @@ function App(): React.ReactElement {
       {paletteOpen && (
         <Suspense fallback={null}>
           <CommandPalette open={paletteOpen} onClose={closePalette} />
+        </Suspense>
+      )}
+      {showIntro && (
+        <Suspense
+          fallback={<div style={{ position: "fixed", inset: 0, zIndex: 20000, background: "#02030a" }} />}
+        >
+          <GalaxyIntro onFinish={finishIntro} />
         </Suspense>
       )}
     </ThemeProvider>
