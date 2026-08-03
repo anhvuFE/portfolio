@@ -251,4 +251,6 @@ const BentoGrid: React.FC = () => {
   );
 };
 
-export default BentoGrid;
+// Memoized: prop-less, so App-level re-renders (e.g. the command palette) don't
+// cascade into the grid and its drawer.
+export default React.memo(BentoGrid);

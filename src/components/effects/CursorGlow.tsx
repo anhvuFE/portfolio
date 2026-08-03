@@ -72,4 +72,6 @@ const CursorGlow: React.FC = () => {
   );
 };
 
-export default CursorGlow;
+// Memoized: takes no props, so it should skip re-rendering when App re-renders
+// (e.g. toggling the command palette).
+export default React.memo(CursorGlow);
